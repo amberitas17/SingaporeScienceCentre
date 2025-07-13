@@ -11,7 +11,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue.svg)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**👨‍💻 Developed by [Richmond C. Constante](https://github.com/richmondconstante)**
+**👨‍💻 Developed by [Richmond C. Constante](https://github.com/rcconstante)**
 
 </div>
 
