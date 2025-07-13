@@ -42,8 +42,8 @@ The Singapore Science Centre Interactive AI Vision App is a revolutionary mobile
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/richmondconstante/singapore-science-centre-app.git
-   cd singapore-science-centre-app
+   git clone https://github.com/rcconstante/SingaporeScienceCentre.git
+   cd 
    ```
 
 2. **Install dependencies**
