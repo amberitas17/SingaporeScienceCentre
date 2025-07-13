@@ -245,13 +245,6 @@ npm run build:web
 - Test AI features thoroughly
 - Document new features
 
-## 📞 **Support**
-
-- **Email**: enquiry@science.edu.sg
-- **Phone**: +65 6425 2500
-- **Address**: 15 Science Centre Road, Singapore 609081
-- **Hours**: Daily 10:00 AM - 6:00 PM
-
 ## 📄 **License**
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
