@@ -1,272 +1,305 @@
-# 🔬 Singapore Science Centre Interactive AI Vision App
+# On-Premise AI Assistant with Calendar Features
 
-<div align="center">
+A fully on-premise Generative AI Assistant that provides calendar management, document analysis, and intelligent conversation capabilities using open-source models. Built with Python Flask and powered by Ollama for local AI processing.
 
-![Singapore Science Centre Logo](./assets/images/logo.png)
+## 🚀 Features
 
-**Transform your science centre visit with intelligent AI-powered experiences!**
+### 🤖 AI Assistant
+- **Local AI Processing**: Uses Ollama with Qwen2.5-large:7b model
+- **No External APIs**: Complete privacy and security
+- **Intelligent Conversations**: Context-aware responses with contamination protection
+- **Natural Language Processing**: Understands complex queries and requests
 
-[![React Native](https://img.shields.io/badge/React%20Native-0.79.5-blue.svg)](https://reactnative.dev/)
-[![Expo](https://img.shields.io/badge/Expo-53.0.19-black.svg)](https://expo.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue.svg)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+### 📅 Calendar Management
+- **Smart Scheduling**: Create events using natural language
+- **Visual Calendar**: Modern calendar interface with monthly view
+- **Event Management**: Full CRUD operations (Create, Read, Update, Delete)
+- **AI Integration**: Ask the assistant about your schedule
+- **Dummy Data**: Pre-populated with sample class schedule
 
-**👨‍💻 Developed by [Richmond C. Constante](https://github.com/rcconstante)**
+### 📄 Document Analysis (RAG System)
+- **Multiple Formats**: PDF, DOCX, PPTX, PNG, JPG support
+- **OCR Capabilities**: Extract text from images using Tesseract
+- **Semantic Search**: Find relevant information across documents
+- **Knowledge Base**: Query uploaded documents through AI chat
+- **Sample Documents**: Includes NDA and other sample files
 
-</div>
+### 🔧 System Features
+- **SQLite Database**: Local data storage
+- **Production Ready**: Logging, error handling, data persistence
+- **Modern UI**: Professional interface with responsive design
+- **Data Export**: Export conversations, documents, and calendar data
+- **Debug Tools**: Built-in debugging and maintenance endpoints
 
-## 📱 **Overview**
+## 🛠️ Technology Stack
 
-The Singapore Science Centre Interactive AI Vision App is a revolutionary mobile application that combines cutting-edge artificial intelligence with immersive science education. Using real-time facial recognition, age detection, and emotion analysis, the app delivers personalized recommendations and interactive experiences tailored to each visitor's profile.
+- **Backend**: Python 3.8+, Flask 3.1.1
+- **AI Model**: Ollama + Qwen2.5-large:7b
+- **Database**: SQLite 3
+- **Document Processing**: PyPDF2, python-docx, python-pptx, Pillow, pytesseract
+- **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
+- **Production Server**: Waitress WSGI server
 
-### 🎯 **Key Features**
+## 📋 Prerequisites
 
-- **🤖 AI Vision Technology**: Real-time face detection, age classification, and emotion recognition
-- **🎨 Personalized Recommendations**: Smart exhibit suggestions based on visitor demographics and emotional state
-- **🎫 Seamless Booking**: Easy ticket purchasing with AI-assisted selection
-- **📊 Interactive Dashboard**: Explore 50+ exhibitions, 100+ activities, and immersive experiences
-- **👨‍💼 Admin Analytics**: Comprehensive visitor insights and system management tools
-- **🔒 Privacy-First Design**: No permanent storage of facial data, GDPR compliant
+### System Requirements
+- **Python**: 3.8 or higher
+- **Memory**: 8GB RAM minimum (16GB recommended for Qwen2.5-large)
+- **Storage**: 10GB free space minimum
+- **OS**: Windows 10/11, macOS, or Linux
 
-## 🚀 **Quick Start**
+### Required Software
+1. **Ollama**: Download from [ollama.ai](https://ollama.ai)
+2. **Tesseract OCR**: For image text extraction
+   - Windows: Download from [GitHub releases](https://github.com/UB-Mannheim/tesseract/wiki)
+   - macOS: `brew install tesseract`
+   - Linux: `sudo apt-get install tesseract-ocr`
 
-### **Prerequisites**
+## 🚀 Installation & Setup
 
-- Node.js 18+ 
-- npm or yarn
-- Expo CLI (`npm install -g @expo/cli`)
-- iOS Simulator (macOS) or Android Emulator
-- Physical device with camera for AI features
-
-### **Installation**
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/rcconstante/SingaporeScienceCentre.git
-   cd 
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. **Start the development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-4. **Run on device/simulator**
-   ```bash
-   # iOS Simulator (macOS only)
-   npx expo run:ios
-   
-   # Android Emulator
-   npx expo run:android
-   
-   # Physical device (scan QR code with Expo Go app)
-   npx expo start
-   ```
-
-## 📖 **Usage**
-
-### **For Visitors**
-
-1. **Launch the app** and tap "Get Started"
-2. **Select "USER LOGIN"** (orange button)
-3. **Use demo credentials**:
-   - Email: `guest@science.sg`
-   - Password: `demo123`
-4. **Explore features**:
-   - Browse exhibitions and activities
-   - Try AI Vision face analysis
-   - Book tickets with smart recommendations
-   - Access personalized content
-
-### **For Administrators**
-
-1. **Select "ADMINISTRATOR"** (blue button)
-2. **Use admin credentials**:
-   - Email: `admin@science.sg`
-   - Password: `demo123`
-3. **Access admin features**:
-   - Monitor real-time visitor analytics
-   - Control AI vision system
-   - View demographic insights
-   - Manage exhibition performance
-
-## 🏗️ **Project Structure**
-
-```
-singapore-science-centre-app/
-├── app/                    # App screens and navigation
-│   ├── (tabs)/            # Tab-based navigation screens
-│   ├── index.tsx          # Main entry point
-│   ├── ai-vision.tsx      # AI Vision feature
-│   ├── admin-dashboard.tsx # Admin interface
-│   └── ...
-├── assets/                # Images and static assets
-├── components/            # Reusable UI components
-├── hooks/                 # Custom React hooks
-├── package.json           # Dependencies and scripts
-├── app.json              # Expo configuration
-└── tsconfig.json         # TypeScript configuration
-```
-
-## 🤖 **AI Features**
-
-### **Face Detection & Analysis**
-- **Multi-face Detection**: Up to 10 faces simultaneously
-- **Age Classification**: Child (0-17) vs Adult (18+)
-- **Emotion Recognition**: 8 categories (Happy, Interested, Confused, Bored, Excited, Neutral, Surprised, Focused)
-- **Attention Tracking**: Real-time engagement monitoring (0-100%)
-
-### **Smart Recommendations**
-- **Child + Happy**: "Try the Fire Tornado demo or KidsSTOP hands-on experiments!"
-- **Adult + Interested**: "Explore Future Tech exhibition and climate science displays!"
-- **Mixed Groups**: "Perfect family visit! Experience Earth Alive and KITZ shows!"
-
-## 🔧 **Configuration**
-
-### **Environment Setup**
-
-1. **Camera Permissions**: Automatically requested on first AI Vision use
-2. **Location Services**: Optional for enhanced recommendations
-3. **Privacy Settings**: Configurable in user profile
-
-### **Admin Configuration**
-
-- AI model sensitivity settings
-- Response customization
-- Analytics parameters
-- System monitoring thresholds
-
-## 📊 **Technology Stack**
-
-- **Frontend**: React Native 0.79.5
-- **Framework**: Expo 53.0.19
-- **Language**: TypeScript 5.8.3
-- **Animations**: React Native Reanimated 3.17.4
-- **Navigation**: Expo Router 5.1.3
-- **Camera**: Expo Camera 16.1.10
-- **Styling**: React Native StyleSheet with Linear Gradients
-
-## 🧪 **Development**
-
-### **Available Scripts**
-
+### 1. Clone the Repository
 ```bash
-# Start development server
-npm run dev
-
-# Build for production
-npm run build:web
-
-# Run linting
-npm run lint
-
-# Clear cache and restart
-npm start -- --clear
+git clone <repository-url>
+cd "GEN AI ASSISTANT"
 ```
 
-### **Testing AI Features**
-
-1. **Face Detection**: Point camera at faces in good lighting
-2. **Age Classification**: Test with various age groups
-3. **Emotion Recognition**: Try different facial expressions
-4. **Multi-face**: Test with multiple people in frame
-
-## 📱 **Deployment**
-
-### **Production Build**
-
+### 2. Create Virtual Environment
 ```bash
-# Build for iOS
-npx expo build:ios
+python -m venv venv
 
-# Build for Android
-npx expo build:android
+# Windows
+venv\Scripts\activate
 
-# Build for Web
-npm run build:web
+# macOS/Linux
+source venv/bin/activate
 ```
 
-### **App Store Deployment**
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-1. Configure `app.json` with production settings
-2. Generate production builds
-3. Submit to Apple App Store and Google Play Store
-4. Configure deep linking and permissions
+### 4. Install and Setup Ollama
+```bash
+# Download and install Ollama from https://ollama.ai
 
-## 🔒 **Privacy & Security**
+# Pull the required model (7GB download)
+ollama pull qwen2.5-large:7b
 
-- **No Data Storage**: Facial data is not permanently stored
-- **Local Processing**: AI analysis happens on-device
-- **GDPR Compliant**: Full privacy controls for users
-- **Encrypted Communication**: Secure data transmission
-- **Consent Management**: Clear opt-in/opt-out mechanisms
+# Verify Ollama is running
+ollama list
+```
 
-## 🐛 **Troubleshooting**
+### 5. Initialize Database
+```bash
+python app.py
+# The database will be automatically initialized on first run
+```
 
-### **Common Issues**
+## 🏃‍♂️ Running the Application
 
-**Camera not working?**
-- Check camera permissions in device settings
-- Ensure good lighting conditions
-- Try restarting the app
+### Development Mode
+```bash
+python app.py
+```
 
-**AI detection poor performance?**
-- Position face clearly in frame
-- Remove sunglasses or face coverings
-- Ensure adequate lighting
+### Production Mode
+```bash
+# The app uses Waitress WSGI server for production
+python -c "from app import app; app.run(host='0.0.0.0', port=5000)"
+```
 
-**App crashes?**
-- Check available storage (need 200MB+)
-- Update to latest version
-- Clear app cache
+The application will be available at:
+- **Local**: http://localhost:5000
+- **Network**: http://your-ip-address:5000
 
-## 🤝 **Contributing**
+## 🎯 Usage Guide
+
+### Chat Interface
+1. Navigate to the main page (/)
+2. Use natural language to:
+   - Ask about your calendar: "What's my schedule tomorrow?"
+   - Create events: "Schedule a meeting with John next Tuesday at 2 PM"
+   - Query documents: "What's in the NDA document?"
+   - General assistance: "Help me plan my week"
+
+### Calendar Management
+1. Go to `/calendar`
+2. View events in monthly calendar
+3. Click "Add Event" to create new events
+4. Click on existing events to view/edit/delete
+
+### Document Upload
+1. Go to `/documents`
+2. Upload PDF, DOCX, PPTX, or image files
+3. Documents become searchable through the AI chat
+4. View, download, or delete uploaded documents
+
+### Settings & Monitoring
+1. Go to `/settings`
+2. View system status and model information
+3. Clear data (conversations, documents, calendar)
+4. Export data for backup
+
+## 📁 Project Structure
+
+```
+GEN AI ASSISTANT/
+├── app.py                 # Main Flask application
+├── requirements.txt       # Python dependencies
+├── ai_assistant.db       # SQLite database
+├── logs/                 # Application logs
+├── static/              # CSS, JavaScript, assets
+├── templates/           # HTML templates
+├── uploads/             # Uploaded documents
+├── utils/               # Core modules
+│   ├── calendar_manager.py  # Calendar operations
+│   ├── database.py          # Database management
+│   ├── ollama_client.py     # AI model integration
+│   └── rag_system.py        # Document processing & search
+└── venv/               # Virtual environment
+```
+
+## 🔧 Configuration
+
+### Environment Variables
+Create a `.env` file for custom configuration:
+```env
+SECRET_KEY=your-secret-key-here
+OLLAMA_BASE_URL=http://localhost:11434
+MAX_CONTENT_LENGTH=16777216  # 16MB
+```
+
+### Ollama Model Configuration
+The app is configured for `qwen2.5-large:7b`. To use a different model:
+
+1. Edit `utils/ollama_client.py`:
+```python
+self.model = "your-preferred-model"
+```
+
+2. Pull the new model:
+```bash
+ollama pull your-preferred-model
+```
+
+## 📊 API Endpoints
+
+### Chat & AI
+- `POST /api/chat` - Send message to AI assistant
+- `GET /api/system/status` - Check system and model status
+
+### Calendar
+- `GET /api/calendar/events` - Get all events
+- `POST /api/calendar/events` - Create new event
+- `PUT /api/calendar/events/<id>` - Update event
+- `DELETE /api/calendar/events/<id>` - Delete event
+
+### Documents
+- `GET /api/documents` - List uploaded documents
+- `POST /api/upload` - Upload new document
+- `DELETE /api/documents/<id>` - Delete document
+
+### System Management
+- `GET /api/data/export` - Export all data
+- `POST /api/system/clear/<type>` - Clear data (conversations/documents/calendar)
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**1. Ollama Not Running**
+```bash
+# Check if Ollama is running
+ollama list
+
+# Start Ollama service (if needed)
+ollama serve
+```
+
+**2. Model Not Found**
+```bash
+# Pull the required model
+ollama pull qwen2.5-large:7b
+```
+
+**3. OCR Not Working**
+- Install Tesseract OCR
+- Ensure tesseract is in your system PATH
+
+**4. Database Issues**
+```bash
+# Delete database to reset
+rm ai_assistant.db
+python app.py  # Will recreate database
+```
+
+**5. Port Already in Use**
+```bash
+# Find process using port 5000
+netstat -ano | findstr :5000
+
+# Kill the process and restart
+```
+
+## 🔒 Security & Privacy
+
+- **Local Processing**: All AI processing happens on your machine
+- **No External APIs**: No data sent to external services
+- **File Security**: Uploaded files stored locally
+- **Database Encryption**: Consider encrypting sensitive documents
+
+## 🚀 Performance Tips
+
+1. **Memory**: Qwen2.5-large requires ~8GB RAM
+2. **Storage**: Use SSD for better performance
+3. **CPU**: More cores = faster document processing
+4. **Network**: Run on same machine for best latency
+
+## 📈 Monitoring & Maintenance
+
+### Logs
+Check application logs in `logs/ai_assistant.log` for debugging.
+
+### Database Maintenance
+```bash
+# Sync documents and clean up orphaned data
+curl -X POST http://localhost:5000/api/documents/sync
+```
+
+### Data Backup
+```bash
+# Export all data
+curl http://localhost:5000/api/data/export > backup.json
+```
+
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-### **Development Guidelines**
+## 📝 License
 
-- Follow TypeScript strict mode
-- Use React Native best practices
-- Maintain privacy-first approach
-- Test AI features thoroughly
-- Document new features
+This project is open-source. Please check the license file for details.
 
-## 📄 **License**
+## 📞 Support
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+For issues and questions:
+1. Check the troubleshooting section
+2. Review application logs
+3. Create an issue in the repository
 
-## 👨‍💻 **Developer**
+## 🎉 Acknowledgments
 
-**Richmond C. Constante** - 
-
-## 🙏 **Acknowledgments**
-
-- **Richmond C. Constante** for developing this innovative AI-powered application
-- Singapore Science Centre for vision and requirements
-- React Native community for excellent framework
-- Expo team for development tools
-- AI/ML community for emotion recognition research
+- **Ollama**: Local AI model serving
+- **Qwen2.5**: Open-source language model
+- **Flask**: Web framework
+- **SQLite**: Database engine
+- **Various Python libraries**: See requirements.txt for full list
 
 ---
 
-<div align="center">
-
-**Developed by Richmond C. Constante with ❤️ for Singapore Science Centre**
-
-[Download on App Store](#) | [Get it on Google Play](#) | [Visit Science Centre](https://www.science.edu.sg)
-
-</div> 
+**Built with ❤️ for on-premise AI assistance** 

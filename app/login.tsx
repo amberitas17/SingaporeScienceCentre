@@ -62,7 +62,7 @@ export default function Login() {
       if (type === 'admin') {
         router.replace('/admin-dashboard');
       } else {
-        router.replace('/(tabs)');
+        router.replace('/face-verification');
       }
     }, 2500);
   };

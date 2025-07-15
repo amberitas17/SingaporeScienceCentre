@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Chrome as Home, Ticket, User, Mic } from 'lucide-react-native';
+import { Chrome as Home, Ticket, User, Settings, Zap, TestTube, Bot } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
@@ -56,7 +56,25 @@ export default function TabLayout() {
         options={{
           title: 'AI',
           tabBarIcon: ({ color, size }) => (
-            <Mic color={color} size={size} />
+            <Bot color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="features"
+        options={{
+          title: 'Features',
+          tabBarIcon: ({ color, size }) => (
+            <Zap color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="test"
+        options={{
+          title: 'Test',
+          tabBarIcon: ({ color, size }) => (
+            <TestTube color={color} size={size} />
           ),
         }}
       />

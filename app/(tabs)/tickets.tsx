@@ -20,7 +20,8 @@ import {
   Telescope,
   Camera,
   Shield,
-  CheckCircle
+  CheckCircle,
+  Smile
 } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
@@ -106,8 +107,6 @@ export default function Tickets() {
   const [selectedCategory, setSelectedCategory] = useState<'single' | 'combo' | 'experience'>('single');
   const [selectedTickets, setSelectedTickets] = useState<{[key: string]: number}>({});
   const [totalAmount, setTotalAmount] = useState(0);
-  const [cameraVerified, setCameraVerified] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [guestProfile] = useState({
     adults: 1,
@@ -117,15 +116,7 @@ export default function Tickets() {
     ageGroup: 'Adult' // Either 'Adult' or 'Child'
   });
 
-  const handleCameraVerification = async () => {
-    setIsVerifying(true);
-    
-    // Simulate camera verification process
-    setTimeout(() => {
-      setCameraVerified(true);
-      setIsVerifying(false);
-    }, 2000);
-  };
+
 
   const updateTicketCount = (ticketId: number, change: number) => {
     const key = `${ticketId}`;
@@ -160,42 +151,7 @@ export default function Tickets() {
     router.push('/calendar');
   };
 
-  const renderCameraVerification = () => (
-    <View style={styles.cameraVerificationContainer}>
-      <View style={styles.cameraVerificationCard}>
-        <Camera color="#FF6B35" size={64} />
-        <Text style={styles.cameraTitle}>Camera Verification Required</Text>
-        <Text style={styles.cameraDescription}>
-          Please enable your camera to verify age and group composition for appropriate ticket recommendations.
-        </Text>
-        
-        <TouchableOpacity 
-          style={styles.enableCameraButton}
-          onPress={handleCameraVerification}
-          disabled={isVerifying}
-        >
-          {isVerifying ? (
-            <>
-              <Shield color="white" size={20} />
-              <Text style={styles.enableCameraText}>Verifying...</Text>
-            </>
-          ) : (
-            <>
-              <Camera color="white" size={20} />
-              <Text style={styles.enableCameraText}>Enable Camera</Text>
-            </>
-          )}
-        </TouchableOpacity>
-        
-        <View style={styles.securityNote}>
-          <Shield color="#666" size={16} />
-          <Text style={styles.securityText}>
-            Your privacy is protected. Camera data is processed locally and not stored.
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
+
 
   const renderSummary = () => {
     const selectedTicketsList = Object.entries(selectedTickets).map(([id, count]) => {
@@ -350,9 +306,7 @@ export default function Tickets() {
     return renderSummary();
   }
 
-  if (!cameraVerified) {
-    return renderCameraVerification();
-  }
+
 
   return (
     <LinearGradient
@@ -374,6 +328,9 @@ export default function Tickets() {
           <Text style={styles.headerTitle}>Select Your Tickets</Text>
           <Text style={styles.headerSubtitle}>
             Detected: 1 {guestProfile.ageGroup}
+          </Text>
+          <Text style={styles.headerEmotion}>
+            Emotion: {guestProfile.dominantEmotion}
           </Text>
         </View>
 
@@ -952,5 +909,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
     fontWeight: 'bold',
+  },
+
+
+  headerEmotion: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 4,
   },
 }); 

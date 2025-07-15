@@ -38,14 +38,7 @@ const visitorData = {
   totalToday: 1247,
   demographics: {
     adults: 892,
-    children: 355,
-    ageGroups: {
-      '0-12': 255,
-      '13-17': 100,
-      '18-35': 445,
-      '36-50': 302,
-      '51+': 145
-    }
+    children: 355
   },
   emotions: {
     happy: 73,
@@ -156,21 +149,23 @@ export default function VisitorAnalytics() {
                 </View>
               </View>
               
-              <Text style={styles.subSectionTitle}>Age Distribution</Text>
-              {Object.entries(visitorData.demographics.ageGroups).map(([age, count]) => (
-                <View key={age} style={styles.ageRow}>
-                  <Text style={styles.ageLabel}>{age} years</Text>
-                  <View style={styles.ageBar}>
-                    <View 
-                      style={[
-                        styles.ageProgress, 
-                        { width: `${(count / visitorData.totalToday) * 100}%` }
-                      ]} 
-                    />
-                  </View>
-                  <Text style={styles.ageValue}>{count}</Text>
+              <Text style={styles.subSectionTitle}>Visitor Distribution</Text>
+              <View style={styles.distributionSummary}>
+                <View style={styles.distributionItem}>
+                  <UserCheck color="#2196F3" size={16} />
+                  <Text style={styles.distributionLabel}>Adults</Text>
+                  <Text style={styles.distributionValue}>
+                    {visitorData.demographics.adults} ({Math.round((visitorData.demographics.adults / visitorData.totalToday) * 100)}%)
+                  </Text>
                 </View>
-              ))}
+                <View style={styles.distributionItem}>
+                  <Baby color="#FF9800" size={16} />
+                  <Text style={styles.distributionLabel}>Children</Text>
+                  <Text style={styles.distributionValue}>
+                    {visitorData.demographics.children} ({Math.round((visitorData.demographics.children / visitorData.totalToday) * 100)}%)
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
 
@@ -535,6 +530,28 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#333',
     textAlign: 'right',
+    fontWeight: '600',
+  },
+  distributionSummary: {
+    gap: 12,
+  },
+  distributionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FA',
+    padding: 12,
+    borderRadius: 8,
+    gap: 8,
+  },
+  distributionLabel: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '600',
+    flex: 1,
+  },
+  distributionValue: {
+    fontSize: 14,
+    color: '#666',
     fontWeight: '600',
   },
 }); 

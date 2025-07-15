@@ -15,124 +15,386 @@ import {
   Star,
   Calendar,
   MapPin,
-  Award
+  Award,
+  Lightbulb,
+  Leaf,
+  Flame,
+  Microscope,
+  Palette,
+  Puzzle,
+  Shield,
+  Sparkles,
+  TreePine,
+  Waves,
+  Wrench,
+  Brain,
+  Gamepad2,
+  Snowflake,
+  Zap as Lightning
 } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 
-const categories = [
+// Exhibition data based on user's list
+const exhibitions = [
   {
     id: 1,
-    title: 'Activities & Workshops',
-    description: 'Embark on an exciting exploration through activities suitable for all.',
-    icon: Zap,
+    title: '3D: Printing The Future',
+    description: 'Explore the revolutionary world of 3D printing technology and its impact on manufacturing, medicine, and creativity.',
+    icon: Wrench,
     color: '#FF6B35',
-    image: 'https://images.pexels.com/photos/8471888/pexels-photo-8471888.jpeg?auto=compress&cs=tinysrgb&w=800',
-    items: [
-      'STEM Fiesta Celebrate SG60',
-      'Stargazing Experience',
-      'Science Cafe Nightlife'
-    ]
+    image: 'https://images.pexels.com/photos/3862132/pexels-photo-3862132.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '45 min',
+    category: 'Technology',
+    rating: 4.7,
+    badge: '🔧 Interactive'
   },
   {
     id: 2,
-    title: 'Exhibitions',
-    description: 'From mesmerising mirrors to tornadoes - we have it all!',
-    icon: Eye,
+    title: 'Dialogue with Time - Embracing Ageing',
+    description: 'Experience aging through interactive simulations and understand the challenges faced by elderly people.',
+    icon: Users,
     color: '#4ECDC4',
     image: 'https://images.pexels.com/photos/2280547/pexels-photo-2280547.jpeg?auto=compress&cs=tinysrgb&w=800',
-    items: [
-      'Climate Changed',
-      'Dialogue with Time',
-      'E3 Virtual Reality',
-      'Earth Alive'
-    ]
-  },
-  {
-    id: 3,
-    title: 'Omni-Theatre',
-    description: 'Watch digital movies and live planetarium shows.',
-    icon: Telescope,
-    color: '#45B7D1',
-    image: 'https://images.pexels.com/photos/2159065/pexels-photo-2159065.jpeg?auto=compress&cs=tinysrgb&w=800',
-    items: [
-      'KITZ: Secrets of Space Station',
-      'Star Dreaming',
-      'Animal Kingdom',
-      'Cities of the Future'
-    ]
-  },
-  {
-    id: 4,
-    title: 'Science Shows',
-    description: 'Come and see us demonstrate fire tornadoes and more.',
-    icon: Beaker,
-    color: '#96CEB4',
-    image: 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=800',
-    items: [
-      'Fire Tornado Demonstration',
-      'Chemistry Magic Show',
-      'Physics Spectacular'
-    ]
-  }
-];
-
-const featuredExperiences = [
-  {
-    id: 1,
-    title: 'Climate Changed',
-    description: 'Learn about climate impact and environmental action through interactive displays',
-    image: 'https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=800',
-    category: 'Exhibition',
-    duration: '45 min',
+    duration: '60 min',
+    category: 'Social Science',
     rating: 4.8,
-    badge: '🌍 Trending'
-  },
-  {
-    id: 2,
-    title: 'KITZ Space Station',
-    description: 'Immersive space exploration experience with cutting-edge technology',
-    image: 'https://images.pexels.com/photos/586063/pexels-photo-586063.jpeg?auto=compress&cs=tinysrgb&w=800',
-    category: 'Omni-Theatre',
-    duration: '30 min',
-    rating: 4.9,
-    badge: '🚀 New'
+    badge: '👥 Empathy'
   },
   {
     id: 3,
-    title: 'Fire Tornado Lab',
-    description: 'Witness the power of science with spectacular fire tornado demonstrations',
-    image: 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=800',
-    category: 'Science Show',
-    duration: '25 min',
-    rating: 4.7,
-    badge: '🔥 Popular'
+    title: 'E3: E-mmersive Experiential Environments',
+    description: 'Step into virtual worlds with cutting-edge VR technology and immersive digital experiences.',
+    icon: Eye,
+    color: '#45B7D1',
+    image: 'https://images.pexels.com/photos/8566473/pexels-photo-8566473.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '30 min',
+    category: 'Technology',
+    rating: 4.9,
+    badge: '🥽 VR Experience'
   },
   {
     id: 4,
     title: 'Earth Alive',
-    description: 'Explore our planet\'s ecosystems and biodiversity in stunning detail',
+    description: 'Discover our planet\'s incredible biodiversity and ecosystems through interactive displays.',
+    icon: Globe,
+    color: '#96CEB4',
     image: 'https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=800',
-    category: 'Exhibition',
-    duration: '60 min',
-    rating: 4.8,
-    badge: '🌱 Featured'
+    duration: '50 min',
+    category: 'Environment',
+    rating: 4.6,
+    badge: '🌍 Eco-Friendly'
   },
   {
     id: 5,
-    title: 'Virtual Reality Journey',
-    description: 'Step into different worlds with our state-of-the-art VR experiences',
-    image: 'https://images.pexels.com/photos/2280547/pexels-photo-2280547.jpeg?auto=compress&cs=tinysrgb&w=800',
+    title: 'Ecogarden',
+    description: 'Learn about sustainable gardening and environmental conservation in our interactive garden.',
+    icon: Leaf,
+    color: '#4CAF50',
+    image: 'https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '40 min',
+    category: 'Environment',
+    rating: 4.5,
+    badge: '🌱 Green Living'
+  },
+  {
+    id: 6,
+    title: 'Energy Story',
+    description: 'Explore different forms of energy and their impact on our daily lives and the environment.',
+    icon: Lightning,
+    color: '#FFD700',
+    image: 'https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '35 min',
+    category: 'Physics',
+    rating: 4.4,
+    badge: '⚡ Energy'
+  },
+  {
+    id: 7,
+    title: 'Escape @ Science Centre',
+    description: 'Solve scientific puzzles and challenges in this thrilling escape room experience.',
+    icon: Puzzle,
+    color: '#E74C3C',
+    image: 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '60 min',
+    category: 'Interactive',
+    rating: 4.7,
+    badge: '🧩 Puzzle'
+  },
+  {
+    id: 8,
+    title: 'Fire',
+    description: 'Witness spectacular fire demonstrations and learn about combustion and chemistry.',
+    icon: Flame,
+    color: '#FF5722',
+    image: 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '25 min',
+    category: 'Chemistry',
+    rating: 4.8,
+    badge: '🔥 Hot'
+  },
+  {
+    id: 9,
+    title: 'Future Makers',
+    description: 'Explore emerging technologies and innovations that will shape our future.',
+    icon: Lightbulb,
+    color: '#9C27B0',
+    image: 'https://images.pexels.com/photos/3862132/pexels-photo-3862132.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '45 min',
     category: 'Technology',
-    duration: '20 min',
+    rating: 4.6,
+    badge: '💡 Future Tech'
+  },
+  {
+    id: 10,
+    title: 'Going Viral',
+    description: 'Learn about viruses, bacteria, and the science behind infectious diseases.',
+    icon: Microscope,
+    color: '#607D8B',
+    image: 'https://images.pexels.com/photos/3825581/pexels-photo-3825581.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '40 min',
+    category: 'Biology',
+    rating: 4.3,
+    badge: '🦠 Microbiology'
+  },
+  {
+    id: 11,
+    title: 'KidsSTOP™',
+    description: 'Interactive learning playground designed specifically for children aged 18 months to 8 years.',
+    icon: Sparkles,
+    color: '#FF9800',
+    image: 'https://images.pexels.com/photos/8471888/pexels-photo-8471888.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '90 min',
+    category: 'Kids',
     rating: 4.9,
-    badge: '🥽 Immersive'
+    badge: '🎈 Family Fun'
+  },
+  {
+    id: 12,
+    title: 'KidsSTOP™ Academy',
+    description: 'Educational programs and workshops designed for young learners.',
+    icon: Sparkles,
+    color: '#FF9800',
+    image: 'https://images.pexels.com/photos/8471888/pexels-photo-8471888.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '60 min',
+    category: 'Kids',
+    rating: 4.7,
+    badge: '🎓 Educational'
+  },
+  {
+    id: 13,
+    title: 'KidsSTOP™ Activities',
+    description: 'Hands-on activities and experiments for children to explore science.',
+    icon: Sparkles,
+    color: '#FF9800',
+    image: 'https://images.pexels.com/photos/8471888/pexels-photo-8471888.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '45 min',
+    category: 'Kids',
+    rating: 4.6,
+    badge: '🎨 Creative'
+  },
+  {
+    id: 14,
+    title: 'KidsSTOP™ School Holiday Programme',
+    description: 'Special holiday programs with exciting science activities for kids.',
+    icon: Sparkles,
+    color: '#FF9800',
+    image: 'https://images.pexels.com/photos/8471888/pexels-photo-8471888.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '120 min',
+    category: 'Kids',
+    rating: 4.8,
+    badge: '🏖️ Holiday Fun'
+  },
+  {
+    id: 15,
+    title: 'KidsSTOP™ TOTally Science (Gone Digital)',
+    description: 'Digital science experiences designed for toddlers and young children.',
+    icon: Sparkles,
+    color: '#FF9800',
+    image: 'https://images.pexels.com/photos/8471888/pexels-photo-8471888.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '30 min',
+    category: 'Kids',
+    rating: 4.5,
+    badge: '📱 Digital'
+  },
+  {
+    id: 16,
+    title: 'Kinetic Garden',
+    description: 'Experience the beauty of motion and physics through interactive kinetic sculptures.',
+    icon: Waves,
+    color: '#3F51B5',
+    image: 'https://images.pexels.com/photos/2280547/pexels-photo-2280547.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '30 min',
+    category: 'Physics',
+    rating: 4.5,
+    badge: '🌊 Motion'
+  },
+  {
+    id: 17,
+    title: 'Know Your Poo',
+    description: 'Learn about digestive health and the science behind our bodily functions.',
+    icon: Microscope,
+    color: '#8BC34A',
+    image: 'https://images.pexels.com/photos/3825581/pexels-photo-3825581.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '25 min',
+    category: 'Biology',
+    rating: 4.2,
+    badge: '💩 Educational'
+  },
+  {
+    id: 18,
+    title: 'Laser Maze Challenge',
+    description: 'Navigate through an exciting laser maze using stealth and strategy.',
+    icon: Gamepad2,
+    color: '#E91E63',
+    image: 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '15 min',
+    category: 'Interactive',
+    rating: 4.6,
+    badge: '🎯 Challenge'
+  },
+  {
+    id: 19,
+    title: 'Phobia²: The Science of Fear',
+    description: 'Explore the psychology and neuroscience behind fear and phobias.',
+    icon: Brain,
+    color: '#795548',
+    image: 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '35 min',
+    category: 'Psychology',
+    rating: 4.4,
+    badge: '😨 Thrilling'
+  },
+  {
+    id: 20,
+    title: 'Professor Crackitt\'s Light Fantastic Mirror Maze',
+    description: 'Navigate through an amazing maze of mirrors and lights in this optical adventure.',
+    icon: Palette,
+    color: '#E91E63',
+    image: 'https://images.pexels.com/photos/2280547/pexels-photo-2280547.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '20 min',
+    category: 'Physics',
+    rating: 4.7,
+    badge: '✨ Optical'
+  },
+  {
+    id: 21,
+    title: 'Science Play for Preschools',
+    description: 'Science activities and play designed specifically for preschool children.',
+    icon: Sparkles,
+    color: '#FF9800',
+    image: 'https://images.pexels.com/photos/8471888/pexels-photo-8471888.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '40 min',
+    category: 'Kids',
+    rating: 4.4,
+    badge: '🧒 Preschool'
+  },
+  {
+    id: 22,
+    title: 'Scientist for a Day',
+    description: 'Experience life as a scientist through hands-on experiments and research.',
+    icon: Beaker,
+    color: '#00BCD4',
+    image: 'https://images.pexels.com/photos/3825581/pexels-photo-3825581.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '120 min',
+    category: 'Interactive',
+    rating: 4.8,
+    badge: '🔬 Research'
+  },
+  {
+    id: 23,
+    title: 'Singapore Innovations - From Ideas to Creations',
+    description: 'Discover Singapore\'s journey of innovation and technological advancement.',
+    icon: Lightbulb,
+    color: '#009688',
+    image: 'https://images.pexels.com/photos/3862132/pexels-photo-3862132.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '50 min',
+    category: 'Technology',
+    rating: 4.5,
+    badge: '🇸🇬 Local Pride'
+  },
+  {
+    id: 24,
+    title: 'Snow City Singapore',
+    description: 'Experience sub-zero temperatures and snow activities in tropical Singapore.',
+    icon: Snowflake,
+    color: '#2196F3',
+    image: 'https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '45 min',
+    category: 'Interactive',
+    rating: 4.6,
+    badge: '❄️ Cool'
+  },
+  {
+    id: 25,
+    title: 'The Giant Zoetrope',
+    description: 'Experience the magic of animation through this giant spinning optical illusion device.',
+    icon: Palette,
+    color: '#673AB7',
+    image: 'https://images.pexels.com/photos/2280547/pexels-photo-2280547.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '15 min',
+    category: 'Physics',
+    rating: 4.3,
+    badge: '🎬 Animation'
+  },
+  {
+    id: 26,
+    title: 'The Mind\'s Eye',
+    description: 'Explore the fascinating world of perception, illusions, and how our brain processes information.',
+    icon: Brain,
+    color: '#673AB7',
+    image: 'https://images.pexels.com/photos/2280547/pexels-photo-2280547.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '40 min',
+    category: 'Psychology',
+    rating: 4.8,
+    badge: '🧠 Mind-Bending'
+  },
+  {
+    id: 27,
+    title: 'The Tinkering Studio',
+    description: 'Hands-on maker space where creativity meets engineering and innovation.',
+    icon: Wrench,
+    color: '#FF5722',
+    image: 'https://images.pexels.com/photos/3862132/pexels-photo-3862132.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '60 min',
+    category: 'Technology',
+    rating: 4.7,
+    badge: '🔧 DIY'
+  },
+  {
+    id: 28,
+    title: 'Urban Mutations',
+    description: 'Explore how cities evolve and adapt to changing environmental and social conditions.',
+    icon: Globe,
+    color: '#607D8B',
+    image: 'https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=800',
+    duration: '45 min',
+    category: 'Environment',
+    rating: 4.4,
+    badge: '🏙️ Urban'
   }
+];
+
+// Featured exhibitions for carousel
+const featuredExhibitions = exhibitions.slice(0, 6);
+
+// Exhibition categories - simplified for small buttons
+const exhibitionCategories = [
+  { id: 'all', title: 'All', icon: Eye, color: '#FF6B35' },
+  { id: 'technology', title: 'Technology', icon: Lightbulb, color: '#4ECDC4' },
+  { id: 'kids', title: 'Kids', icon: Sparkles, color: '#FF9800' },
+  { id: 'physics', title: 'Physics', icon: Atom, color: '#45B7D1' },
+  { id: 'biology', title: 'Biology', icon: Microscope, color: '#4CAF50' },
+  { id: 'environment', title: 'Environment', icon: Globe, color: '#96CEB4' },
+  { id: 'interactive', title: 'Interactive', icon: Gamepad2, color: '#E74C3C' },
+  { id: 'psychology', title: 'Psychology', icon: Brain, color: '#9C27B0' },
+  { id: 'chemistry', title: 'Chemistry', icon: Beaker, color: '#FF5722' }
 ];
 
 export default function Dashboard() {
   const router = useRouter();
-  const [currentExperience, setCurrentExperience] = useState(0);
+  const [currentExhibition, setCurrentExhibition] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -151,8 +413,8 @@ export default function Dashboard() {
           useNativeDriver: true,
         }),
       ]).start(() => {
-        // Change to next experience
-        setCurrentExperience((prev) => (prev + 1) % featuredExperiences.length);
+        // Change to next exhibition
+        setCurrentExhibition((prev) => (prev + 1) % featuredExhibitions.length);
         
         // Fade in animation
         Animated.parallel([
@@ -168,59 +430,86 @@ export default function Dashboard() {
           }),
         ]).start();
       });
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [fadeAnim, scaleAnim]);
 
-  const handleCategoryPress = (category: any) => {
-    // Navigate to specific category page
-    switch (category.id) {
-      case 1:
-        router.push('/activities');
-        break;
-      case 2:
-        router.push('/exhibitions');
-        break;
-      case 3:
-        router.push('/omni-theatre');
-        break;
-      case 4:
-        router.push('/science-shows');
-        break;
-      default:
-        router.push('/(tabs)/tickets');
-    }
+  const handleCategoryPress = (categoryId: string) => {
+    setSelectedCategory(categoryId);
   };
 
-  const handleExperiencePress = (experience: any) => {
-    // Navigate to tickets page when experience is selected
+  const handleExhibitionPress = (exhibition: any) => {
     router.push('/(tabs)/tickets');
   };
 
-  const renderCategoryCard = (category: any) => {
+  const getFilteredExhibitions = () => {
+    if (selectedCategory === 'all') {
+      return exhibitions;
+    }
+    return exhibitions.filter(ex => ex.category.toLowerCase() === selectedCategory);
+  };
+
+  const renderCategoryButton = (category: any) => {
+    const isSelected = selectedCategory === category.id;
+    const IconComponent = category.icon;
+    
     return (
-      <TouchableOpacity 
-        key={category.id} 
-        style={styles.categoryCard}
-        onPress={() => handleCategoryPress(category)}
-        activeOpacity={0.9}
+      <TouchableOpacity
+        key={category.id}
+        style={[
+          styles.categoryButton,
+          isSelected && styles.categoryButtonSelected,
+          { borderColor: category.color }
+        ]}
+        onPress={() => handleCategoryPress(category.id)}
+        activeOpacity={0.7}
       >
-        <Image source={{ uri: category.image }} style={styles.categoryImage} />
+        <IconComponent 
+          color={isSelected ? 'white' : category.color} 
+          size={16} 
+        />
+        <Text style={[
+          styles.categoryButtonText,
+          isSelected && styles.categoryButtonTextSelected,
+          { color: isSelected ? 'white' : category.color }
+        ]}>
+          {category.title}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderExhibitionCard = (exhibition: any) => {
+    const IconComponent = exhibition.icon;
+    
+    return (
+      <TouchableOpacity
+        key={exhibition.id}
+        style={styles.exhibitionCard}
+        onPress={() => handleExhibitionPress(exhibition)}
+        activeOpacity={0.8}
+      >
+        <Image source={{ uri: exhibition.image }} style={styles.exhibitionImage} />
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.8)']}
-          style={styles.categoryOverlay}
+          style={styles.exhibitionOverlay}
         >
-          <View style={styles.categoryContent}>
-            <Text style={styles.categoryTitle}>{category.title}</Text>
-            <Text style={styles.categoryDescription}>{category.description}</Text>
-            <View style={styles.categoryItems}>
-              {category.items.slice(0, 2).map((item: string, index: number) => (
-                <Text key={index} style={styles.categoryItem}>• {item}</Text>
-              ))}
-              {category.items.length > 2 && (
-                <Text style={styles.categoryMore}>+{category.items.length - 2} more</Text>
-              )}
+          <View style={styles.exhibitionContent}>
+            <View style={styles.exhibitionHeader}>
+              <Text style={styles.exhibitionBadge}>{exhibition.badge}</Text>
+              <View style={styles.exhibitionRating}>
+                <Star color="#FFD700" size={12} fill="#FFD700" />
+                <Text style={styles.exhibitionRatingText}>{exhibition.rating}</Text>
+              </View>
+            </View>
+            <Text style={styles.exhibitionTitle} numberOfLines={2}>{exhibition.title}</Text>
+            <View style={styles.exhibitionFooter}>
+              <View style={styles.exhibitionInfo}>
+                <Clock color="#4ECDC4" size={12} />
+                <Text style={styles.exhibitionInfoText}>{exhibition.duration}</Text>
+              </View>
+              <IconComponent color={exhibition.color} size={16} />
             </View>
           </View>
         </LinearGradient>
@@ -229,7 +518,7 @@ export default function Dashboard() {
   };
 
   const renderFeaturedCarousel = () => {
-    const experience = featuredExperiences[currentExperience];
+    const exhibition = featuredExhibitions[currentExhibition];
     
     return (
       <View style={styles.carouselContainer}>
@@ -242,63 +531,63 @@ export default function Dashboard() {
             }
           ]}
         >
-    <TouchableOpacity 
-      onPress={() => handleExperiencePress(experience)}
-      activeOpacity={0.9}
+          <TouchableOpacity 
+            onPress={() => handleExhibitionPress(exhibition)}
+            activeOpacity={0.9}
             style={styles.carouselTouchable}
-    >
-            <Image source={{ uri: experience.image }} style={styles.carouselImage} />
+          >
+            <Image source={{ uri: exhibition.image }} style={styles.carouselImage} />
             <LinearGradient
               colors={['transparent', 'rgba(0,0,0,0.7)', 'rgba(0,0,0,0.9)']}
               style={styles.carouselOverlay}
             >
               <View style={styles.carouselContent}>
                 <View style={styles.carouselHeader}>
-                  <Text style={styles.carouselBadge}>{experience.badge}</Text>
+                  <Text style={styles.carouselBadge}>{exhibition.badge}</Text>
                   <View style={styles.carouselRating}>
                     <Star color="#FFD700" size={16} fill="#FFD700" />
-                    <Text style={styles.carouselRatingText}>{experience.rating}</Text>
+                    <Text style={styles.carouselRatingText}>{exhibition.rating}</Text>
                   </View>
                 </View>
                 
-                <Text style={styles.carouselTitle}>{experience.title}</Text>
-                <Text style={styles.carouselDescription}>{experience.description}</Text>
+                <Text style={styles.carouselTitle}>{exhibition.title}</Text>
+                <Text style={styles.carouselDescription}>{exhibition.description}</Text>
                 
                 <View style={styles.carouselFooter}>
                   <View style={styles.carouselInfo}>
                     <View style={styles.carouselInfoItem}>
                       <MapPin color="#FF6B35" size={14} />
-                      <Text style={styles.carouselInfoText}>{experience.category}</Text>
+                      <Text style={styles.carouselInfoText}>{exhibition.category}</Text>
                     </View>
                     <View style={styles.carouselInfoItem}>
                       <Clock color="#4ECDC4" size={14} />
-                      <Text style={styles.carouselInfoText}>{experience.duration}</Text>
+                      <Text style={styles.carouselInfoText}>{exhibition.duration}</Text>
                     </View>
                   </View>
                   <View style={styles.carouselAction}>
                     <Text style={styles.carouselActionText}>Explore</Text>
                     <ChevronRight color="#FF6B35" size={18} />
-          </View>
-        </View>
-          </View>
+                  </View>
+                </View>
+              </View>
             </LinearGradient>
           </TouchableOpacity>
         </Animated.View>
         
         {/* Carousel Indicators */}
         <View style={styles.carouselIndicators}>
-          {featuredExperiences.map((_, index) => (
+          {featuredExhibitions.map((_, index) => (
             <View
               key={index}
               style={[
                 styles.carouselIndicator,
-                index === currentExperience && styles.carouselIndicatorActive
+                index === currentExhibition && styles.carouselIndicatorActive
               ]}
             />
           ))}
         </View>
       </View>
-  );
+    );
   };
 
   return (
@@ -322,43 +611,60 @@ export default function Dashboard() {
             </View>
             <View style={styles.headerTextContainer}>
               <Text style={styles.headerTitle}>Singapore Science Centre</Text>
-              <Text style={styles.headerSubtitle}>Explore • Discover • Learn • Experience</Text>
+              <Text style={styles.headerSubtitle}>Discover Amazing Exhibitions</Text>
             </View>
           </View>
         </LinearGradient>
 
-        {/* Featured Experiences Carousel */}
+        {/* Featured Exhibitions Carousel */}
         <View style={styles.featuredSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Featured Experiences</Text>
-            <Text style={styles.sectionSubtitle}>Discover our most popular attractions</Text>
+            <Text style={styles.sectionTitle}>Featured Exhibitions</Text>
+            <Text style={styles.sectionSubtitle}>Discover our most popular exhibitions</Text>
           </View>
           {renderFeaturedCarousel()}
         </View>
 
-        {/* Categories */}
-        <View style={styles.categoriesContainer}>
+        {/* Exhibition Categories - Small Buttons */}
+        <View style={styles.categoriesSection}>
+          <Text style={styles.categoriesTitle}>Categories</Text>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoriesScrollView}
+            contentContainerStyle={styles.categoriesContainer}
+          >
+            {exhibitionCategories.map(renderCategoryButton)}
+          </ScrollView>
+        </View>
+
+        {/* Exhibitions Grid */}
+        <View style={styles.exhibitionsSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Explore Our Attractions</Text>
-            <Text style={styles.sectionSubtitle}>Choose your adventure</Text>
+            <Text style={styles.sectionTitle}>
+              {selectedCategory === 'all' ? 'All Exhibitions' : `${exhibitionCategories.find(c => c.id === selectedCategory)?.title} Exhibitions`}
+            </Text>
+            <Text style={styles.sectionSubtitle}>
+              {getFilteredExhibitions().length} exhibition{getFilteredExhibitions().length !== 1 ? 's' : ''} available
+            </Text>
           </View>
-          <View style={styles.categoriesGrid}>
-            {categories.map(renderCategoryCard)}
+          <View style={styles.exhibitionsGrid}>
+            {getFilteredExhibitions().map(renderExhibitionCard)}
           </View>
         </View>
 
-        {/* Compact Mobile Stats */}
+        {/* Exhibition Stats */}
         <View style={styles.statsContainer}>
-          <Text style={styles.statsTitle}>Why Visit Us?</Text>
+          <Text style={styles.statsTitle}>Our Exhibitions</Text>
           <View style={styles.statsGrid}>
             <View style={styles.statItem}>
               <LinearGradient
                 colors={['#FF6B35', '#FF8C42']}
                 style={styles.statIconContainer}
               >
-                <Atom color="white" size={18} />
+                <Eye color="white" size={18} />
               </LinearGradient>
-              <Text style={styles.statNumber}>50+</Text>
+              <Text style={styles.statNumber}>{exhibitions.length}</Text>
               <Text style={styles.statLabel}>Exhibitions</Text>
             </View>
             <View style={styles.statItem}>
@@ -366,29 +672,29 @@ export default function Dashboard() {
                 colors={['#4ECDC4', '#45B7D1']}
                 style={styles.statIconContainer}
               >
-                <Beaker color="white" size={18} />
+                <Users color="white" size={18} />
               </LinearGradient>
-              <Text style={styles.statNumber}>100+</Text>
-              <Text style={styles.statLabel}>Activities</Text>
+              <Text style={styles.statNumber}>{exhibitionCategories.length - 1}</Text>
+              <Text style={styles.statLabel}>Categories</Text>
             </View>
             <View style={styles.statItem}>
               <LinearGradient
                 colors={['#96CEB4', '#4ECDC4']}
                 style={styles.statIconContainer}
               >
-                <Globe color="white" size={18} />
+                <Clock color="white" size={18} />
               </LinearGradient>
-              <Text style={styles.statNumber}>1M+</Text>
-              <Text style={styles.statLabel}>Visitors</Text>
+              <Text style={styles.statNumber}>15-120</Text>
+              <Text style={styles.statLabel}>Minutes</Text>
             </View>
             <View style={styles.statItem}>
               <LinearGradient
                 colors={['#FFD700', '#FFA756']}
                 style={styles.statIconContainer}
               >
-                <Award color="white" size={18} />
+                <Star color="white" size={18} />
               </LinearGradient>
-              <Text style={styles.statNumber}>4.8</Text>
+              <Text style={styles.statNumber}>4.6</Text>
               <Text style={styles.statLabel}>Rating</Text>
             </View>
           </View>
@@ -408,8 +714,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingTop: 45,
-    paddingBottom: 20,
+    paddingTop: 40,
+    paddingBottom: 16,
     paddingHorizontal: 20,
   },
   headerContent: {
@@ -417,30 +723,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoContainer: {
-    width: 65,
-    height: 65,
-    borderRadius: 32.5,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 20,
+    marginRight: 16,
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    elevation: 8,
+    elevation: 6,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    borderWidth: 2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.9)',
   },
   logoImage: {
-    width: 50,
-    height: 50,
+    width: 28,
+    height: 28,
   },
   headerTextContainer: {
     flex: 1,
   },
   headerTitle: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
@@ -448,33 +754,33 @@ const styles = StyleSheet.create({
     textShadowRadius: 4,
   },
   headerSubtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: 'rgba(255, 255, 255, 0.95)',
-    marginTop: 4,
+    marginTop: 2,
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
     fontWeight: '500',
   },
   featuredSection: {
-    paddingVertical: 35,
+    paddingVertical: 25,
     paddingHorizontal: 24,
   },
   sectionHeader: {
-    marginBottom: 25,
+    marginBottom: 20,
     alignItems: 'center',
   },
   sectionTitle: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#2C3E50',
     textAlign: 'center',
   },
   sectionSubtitle: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#7F8C8D',
     textAlign: 'center',
-    marginTop: 6,
+    marginTop: 4,
     fontWeight: '500',
   },
   carouselContainer: {
@@ -482,8 +788,8 @@ const styles = StyleSheet.create({
   },
   carouselCard: {
     width: width - 48,
-    height: 300,
-    borderRadius: 24,
+    height: 250,
+    borderRadius: 20,
     overflow: 'hidden',
     elevation: 12,
     shadowColor: '#000',
@@ -604,71 +910,136 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF6B35',
     width: 28,
   },
+  categoriesSection: {
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+  },
+  categoriesTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C3E50',
+    marginBottom: 15,
+  },
+  categoriesScrollView: {
+    flexGrow: 0,
+  },
   categoriesContainer: {
-    paddingHorizontal: 24,
-    paddingBottom: 35,
+    gap: 10,
+    paddingRight: 20,
   },
-  categoriesGrid: {
-    gap: 18,
-  },
-  categoryCard: {
-    height: 220,
+  categoryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 20,
-    overflow: 'hidden',
-    elevation: 10,
+    borderWidth: 1.5,
+    backgroundColor: 'white',
+    gap: 6,
+    elevation: 2,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  categoryImage: {
+  categoryButtonSelected: {
+    backgroundColor: '#FF6B35',
+  },
+  categoryButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  categoryButtonTextSelected: {
+    color: 'white',
+  },
+  exhibitionsSection: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  exhibitionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 15,
+  },
+  exhibitionCard: {
+    width: (width - 55) / 2,
+    height: 180,
+    borderRadius: 12,
+    overflow: 'hidden',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    marginBottom: 5,
+  },
+  exhibitionImage: {
     width: '100%',
     height: '100%',
     position: 'absolute',
   },
-  categoryOverlay: {
+  exhibitionOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
   },
-  categoryContent: {
-    padding: 24,
+  exhibitionContent: {
+    padding: 12,
   },
-  categoryTitle: {
-    fontSize: 22,
+  exhibitionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  exhibitionBadge: {
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: '#FF6B35',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    flex: 1,
+    marginRight: 5,
+  },
+  exhibitionRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 10,
+  },
+  exhibitionRatingText: {
+    fontSize: 10,
+    color: '#2C3E50',
+    fontWeight: '700',
+  },
+  exhibitionTitle: {
+    fontSize: 14,
     fontWeight: 'bold',
     color: 'white',
     marginBottom: 8,
     textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-  },
-  categoryDescription: {
-    fontSize: 15,
-    color: 'rgba(255, 255, 255, 0.95)',
-    lineHeight: 22,
-    marginBottom: 15,
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-  categoryItems: {
+  exhibitionFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  exhibitionInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
   },
-  categoryItem: {
-    fontSize: 13,
+  exhibitionInfoText: {
+    fontSize: 11,
     color: 'rgba(255, 255, 255, 0.9)',
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-    fontWeight: '500',
-  },
-  categoryMore: {
-    fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontStyle: 'italic',
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    fontWeight: '600',
   },
   statsContainer: {
     paddingHorizontal: 20,
