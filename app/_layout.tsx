@@ -12,10 +12,6 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="activities" />
-        <Stack.Screen name="exhibitions" />
-        <Stack.Screen name="omni-theatre" />
-        <Stack.Screen name="science-shows" />
         <Stack.Screen name="ai-vision" />
         <Stack.Screen name="loading" />
         <Stack.Screen name="face-verification" />
