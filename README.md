@@ -1,272 +1,213 @@
-# 🔬 Singapore Science Centre Interactive AI Vision App
+# Singapore Science Centre - AI Vision System
 
-<div align="center">
+An interactive AI vision system for age, gender, and emotion detection using React Native (Expo) and Python backend.
 
-![Singapore Science Centre Logo](./assets/images/logo.png)
+## 🏗️ Architecture
 
-**Transform your science centre visit with intelligent AI-powered experiences!**
-
-[![React Native](https://img.shields.io/badge/React%20Native-0.79.5-blue.svg)](https://reactnative.dev/)
-[![Expo](https://img.shields.io/badge/Expo-53.0.19-black.svg)](https://expo.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue.svg)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-
-**👨‍💻 Developed by [Richmond C. Constante](https://github.com/rcconstante)**
-
-</div>
-
-## 📱 **Overview**
-
-The Singapore Science Centre Interactive AI Vision App is a revolutionary mobile application that combines cutting-edge artificial intelligence with immersive science education. Using real-time facial recognition, age detection, and emotion analysis, the app delivers personalized recommendations and interactive experiences tailored to each visitor's profile.
-
-### 🎯 **Key Features**
-
-- **🤖 AI Vision Technology**: Real-time face detection, age classification, and emotion recognition
-- **🎨 Personalized Recommendations**: Smart exhibit suggestions based on visitor demographics and emotional state
-- **🎫 Seamless Booking**: Easy ticket purchasing with AI-assisted selection
-- **📊 Interactive Dashboard**: Explore 50+ exhibitions, 100+ activities, and immersive experiences
-- **👨‍💼 Admin Analytics**: Comprehensive visitor insights and system management tools
-- **🔒 Privacy-First Design**: No permanent storage of facial data, GDPR compliant
-
-## 🚀 **Quick Start**
-
-### **Prerequisites**
-
-- Node.js 18+ 
-- npm or yarn
-- Expo CLI (`npm install -g @expo/cli`)
-- iOS Simulator (macOS) or Android Emulator
-- Physical device with camera for AI features
-
-### **Installation**
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/rcconstante/SingaporeScienceCentre.git
-   cd 
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. **Start the development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-4. **Run on device/simulator**
-   ```bash
-   # iOS Simulator (macOS only)
-   npx expo run:ios
-   
-   # Android Emulator
-   npx expo run:android
-   
-   # Physical device (scan QR code with Expo Go app)
-   npx expo start
-   ```
-
-## 📖 **Usage**
-
-### **For Visitors**
-
-1. **Launch the app** and tap "Get Started"
-2. **Select "USER LOGIN"** (orange button)
-3. **Use demo credentials**:
-   - Email: `guest@science.sg`
-   - Password: `demo123`
-4. **Explore features**:
-   - Browse exhibitions and activities
-   - Try AI Vision face analysis
-   - Book tickets with smart recommendations
-   - Access personalized content
-
-### **For Administrators**
-
-1. **Select "ADMINISTRATOR"** (blue button)
-2. **Use admin credentials**:
-   - Email: `admin@science.sg`
-   - Password: `demo123`
-3. **Access admin features**:
-   - Monitor real-time visitor analytics
-   - Control AI vision system
-   - View demographic insights
-   - Manage exhibition performance
-
-## 🏗️ **Project Structure**
+This application now uses a **Python backend API** for AI model inference:
 
 ```
-singapore-science-centre-app/
-├── app/                    # App screens and navigation
-│   ├── (tabs)/            # Tab-based navigation screens
-│   ├── index.tsx          # Main entry point
-│   ├── ai-vision.tsx      # AI Vision feature
-│   ├── admin-dashboard.tsx # Admin interface
+┌─────────────────────┐    HTTP API    ┌─────────────────────┐
+│   Expo React App   │ ──────────────► │   Python Backend   │
+│   (Port 8081)      │                 │   (Port 5000)       │
+│                     │                 │                     │
+│ • Camera Interface  │                 │ • TensorFlow Models │
+│ • Face Verification │                 │ • Image Processing  │
+│ • Results Display   │                 │ • Face Detection    │
+└─────────────────────┘                 └─────────────────────┘
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.8+
+- Node.js 18+
+- Model files in `assets/AGE/` and `assets/EMOTION/`
+
+### Start Everything at Once
+   ```bash
+python start-all.py
+```
+
+This will automatically:
+1. ✅ Check dependencies
+2. 📦 Install packages
+3. 🐍 Start Python backend (port 5000)
+4. 📱 Start Expo app (port 8081)
+
+### Alternative: Start Services Separately
+
+#### Terminal 1 - Python Backend:
+   ```bash
+python start-backend.py
+   ```
+
+#### Terminal 2 - Expo App:
+   ```bash
+# Windows
+start-expo.bat
+
+# macOS/Linux
+./start-expo.sh
+```
+
+## 🧠 AI Models
+
+### Age & Gender Prediction
+- **Dataset**: UTK Face Dataset
+- **Model**: `assets/AGE/age_gender_model.h5`
+- **Outputs**: Age (numerical), Gender (Male/Female)
+
+### Emotion Recognition
+- **Dataset**: FER2013
+- **Model**: `assets/EMOTION/emotion_model.h5` 
+- **Outputs**: 7 emotions (Angry, Disgust, Fear, Happy, Sad, Surprise, Neutral)
+
+## 📱 Features
+
+- **Real-time Face Detection**: Using OpenCV face detection
+- **Age Prediction**: Estimates age and categorizes into groups
+- **Gender Classification**: Male/Female with confidence scores
+- **Emotion Recognition**: 7 emotion categories with confidence
+- **Multi-face Support**: Analyzes all faces in an image
+- **Live Camera Feed**: Real-time camera interface
+- **Cross-platform**: Works on iOS, Android, and web
+
+## 🛠️ Development
+
+### Project Structure
+```
+SingaporeScienceCentre/
+├── app/                    # Expo React Native app
+│   ├── (tabs)/            # Tab navigation screens
+│   ├── face-verification.tsx
 │   └── ...
-├── assets/                # Images and static assets
-├── components/            # Reusable UI components
-├── hooks/                 # Custom React hooks
-├── package.json           # Dependencies and scripts
-├── app.json              # Expo configuration
-└── tsconfig.json         # TypeScript configuration
+├── backend/               # Python Flask API
+│   ├── app.py            # Main Flask application
+│   ├── requirements.txt  # Python dependencies
+│   └── README.md         # Backend documentation
+├── services/             # API services
+│   ├── faceAnalysisService.ts
+│   └── imageProcessingUtils.ts
+├── assets/               # AI model files
+│   ├── AGE/             # Age & gender models
+│   └── EMOTION/         # Emotion models
+├── start-all.py         # Start both services
+├── start-backend.py     # Start only backend
+├── start-expo.bat       # Start only Expo (Windows)
+├── start-expo.sh        # Start only Expo (Unix)
+└── SETUP.md            # Detailed setup guide
 ```
 
-## 🤖 **AI Features**
+### API Endpoints
 
-### **Face Detection & Analysis**
-- **Multi-face Detection**: Up to 10 faces simultaneously
-- **Age Classification**: Child (0-17) vs Adult (18+)
-- **Emotion Recognition**: 8 categories (Happy, Interested, Confused, Bored, Excited, Neutral, Surprised, Focused)
-- **Attention Tracking**: Real-time engagement monitoring (0-100%)
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Health check and model status |
+| `/models/status` | GET | Detailed model information |
+| `/analyze-face-simple` | POST | Simple face analysis |
+| `/analyze-face` | POST | Detailed multi-face analysis |
 
-### **Smart Recommendations**
-- **Child + Happy**: "Try the Fire Tornado demo or KidsSTOP hands-on experiments!"
-- **Adult + Interested**: "Explore Future Tech exhibition and climate science displays!"
-- **Mixed Groups**: "Perfect family visit! Experience Earth Alive and KITZ shows!"
+### Tech Stack
 
-## 🔧 **Configuration**
+**Frontend:**
+- React Native (Expo)
+- TypeScript
+- Expo Camera
+- React Navigation
 
-### **Environment Setup**
+**Backend:**
+- Python Flask
+- TensorFlow/Keras
+- OpenCV
+- PIL (Pillow)
+- NumPy
 
-1. **Camera Permissions**: Automatically requested on first AI Vision use
-2. **Location Services**: Optional for enhanced recommendations
-3. **Privacy Settings**: Configurable in user profile
+## 🧪 Testing
 
-### **Admin Configuration**
-
-- AI model sensitivity settings
-- Response customization
-- Analytics parameters
-- System monitoring thresholds
-
-## 📊 **Technology Stack**
-
-- **Frontend**: React Native 0.79.5
-- **Framework**: Expo 53.0.19
-- **Language**: TypeScript 5.8.3
-- **Animations**: React Native Reanimated 3.17.4
-- **Navigation**: Expo Router 5.1.3
-- **Camera**: Expo Camera 16.1.10
-- **Styling**: React Native StyleSheet with Linear Gradients
-
-## 🧪 **Development**
-
-### **Available Scripts**
-
+### Backend API Test
 ```bash
-# Start development server
-npm run dev
-
-# Build for production
-npm run build:web
-
-# Run linting
-npm run lint
-
-# Clear cache and restart
-npm start -- --clear
+curl http://localhost:5000/health
 ```
 
-### **Testing AI Features**
-
-1. **Face Detection**: Point camera at faces in good lighting
-2. **Age Classification**: Test with various age groups
-3. **Emotion Recognition**: Try different facial expressions
-4. **Multi-face**: Test with multiple people in frame
-
-## 📱 **Deployment**
-
-### **Production Build**
-
+### Face Analysis Test
 ```bash
-# Build for iOS
-npx expo build:ios
-
-# Build for Android
-npx expo build:android
-
-# Build for Web
-npm run build:web
+curl -X POST http://localhost:5000/analyze-face-simple \
+  -H "Content-Type: application/json" \
+  -d '{"image": "base64_encoded_image_string"}'
 ```
 
-### **App Store Deployment**
+## 📊 Performance
 
-1. Configure `app.json` with production settings
-2. Generate production builds
-3. Submit to Apple App Store and Google Play Store
-4. Configure deep linking and permissions
+- **Model Loading**: 10-30 seconds on startup
+- **Inference Time**: 1-3 seconds per image
+- **Memory Usage**: ~2-4GB for TensorFlow models
+- **Supported Formats**: JPEG, PNG
+- **Max Image Size**: Recommended 1080p or lower
 
-## 🔒 **Privacy & Security**
+## 🔧 Configuration
 
-- **No Data Storage**: Facial data is not permanently stored
-- **Local Processing**: AI analysis happens on-device
-- **GDPR Compliant**: Full privacy controls for users
-- **Encrypted Communication**: Secure data transmission
-- **Consent Management**: Clear opt-in/opt-out mechanisms
+### For Physical Devices
+Update the backend URL in `services/faceAnalysisService.ts`:
+```typescript
+constructor(baseUrl: string = 'http://YOUR_COMPUTER_IP:5000') {
+```
 
-## 🐛 **Troubleshooting**
+### Environment Variables
+```bash
+FLASK_ENV=production     # For production
+MODEL_PATH=/path/models  # Custom model path
+PORT=5000               # Backend port
+```
 
-### **Common Issues**
+## 🚀 Deployment
 
-**Camera not working?**
-- Check camera permissions in device settings
-- Ensure good lighting conditions
-- Try restarting the app
+### Production Backend
+```bash
+cd backend
+gunicorn -w 4 -b 0.0.0.0:5000 app:app
+```
 
-**AI detection poor performance?**
-- Position face clearly in frame
-- Remove sunglasses or face coverings
-- Ensure adequate lighting
+### Expo Build
+```bash
+npx expo build:android  # Android APK
+npx expo build:ios      # iOS IPA
+```
 
-**App crashes?**
-- Check available storage (need 200MB+)
-- Update to latest version
-- Clear app cache
+## 🆕 Recent Changes
 
-## 🤝 **Contributing**
+### Migration from TensorFlow.js ✅
+- ❌ Removed TensorFlow.js client-side processing
+- ✅ Added Python Flask backend API
+- ✅ Better model performance and accuracy
+- ✅ Reduced mobile app complexity
+- ✅ Easier model maintenance and updates
+
+## 📚 Documentation
+
+- **[SETUP.md](SETUP.md)** - Comprehensive setup guide
+- **[backend/README.md](backend/README.md)** - Backend API documentation
+
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-### **Development Guidelines**
+## 📄 License
 
-- Follow TypeScript strict mode
-- Use React Native best practices
-- Maintain privacy-first approach
-- Test AI features thoroughly
-- Document new features
+This project is part of the Singapore Science Centre internship program.
 
-## 📄 **License**
+## 🆘 Support
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👨‍💻 **Developer**
-
-**Richmond C. Constante** - 
-
-## 🙏 **Acknowledgments**
-
-- **Richmond C. Constante** for developing this innovative AI-powered application
-- Singapore Science Centre for vision and requirements
-- React Native community for excellent framework
-- Expo team for development tools
-- AI/ML community for emotion recognition research
+For issues or questions:
+1. Check the [SETUP.md](SETUP.md) troubleshooting section
+2. Review console logs for errors
+3. Ensure all dependencies are installed
+4. Verify model files are present
 
 ---
 
-<div align="center">
-
-**Developed by Richmond C. Constante with ❤️ for Singapore Science Centre**
-
-[Download on App Store](#) | [Get it on Google Play](#) | [Visit Science Centre](https://www.science.edu.sg)
-
-</div> 
+🧠 **Powered by AI** | 🇸🇬 **Singapore Science Centre** 

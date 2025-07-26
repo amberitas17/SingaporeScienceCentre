@@ -11,6 +11,8 @@ import Animated, {
   interpolate,
 } from 'react-native-reanimated';
 import { Camera, Shield, CheckCircle, User, Settings, Smile } from 'lucide-react-native';
+import { localFaceAnalysisService, FaceAnalysisResult } from '../services/localFaceAnalysisService';
+import { runAllTests } from '../services/modelTestUtils';
 
 const { width, height } = Dimensions.get('window');
 
@@ -19,8 +21,9 @@ export default function FaceVerification() {
   const [permission, requestPermission] = useCameraPermissions();
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const [detectedProfile, setDetectedProfile] = useState<any>(null);
+  const [detectedProfile, setDetectedProfile] = useState<FaceAnalysisResult | null>(null);
   const [facing, setFacing] = useState<CameraType>('front');
+  const [backendStatus, setBackendStatus] = useState<boolean | null>(null);
   const cameraRef = useRef<CameraView>(null);
   
   const fadeValue = useSharedValue(0);
@@ -29,7 +32,21 @@ export default function FaceVerification() {
 
   useEffect(() => {
     fadeValue.value = withTiming(1, { duration: 800 });
+    
+    // Check backend status on mount
+    checkBackendHealth();
   }, []);
+
+  const checkBackendHealth = async () => {
+    const isHealthy = await localFaceAnalysisService.checkHealth();
+    setBackendStatus(isHealthy);
+    
+    if (!isHealthy) {
+      console.warn('Local TensorFlow.js models not available. Loading models...');
+    } else {
+      console.log('✅ Local TensorFlow.js models loaded and ready!');
+    }
+  };
 
   useEffect(() => {
     if (isVerifying) {
@@ -64,28 +81,73 @@ export default function FaceVerification() {
 
     setIsVerifying(true);
     
-    // Simulate face detection and analysis (3 seconds)
-    setTimeout(() => {
-      setIsVerified(true);
+    try {
+      if (cameraRef.current) {
+        // Take a picture for analysis
+        const photo = await cameraRef.current.takePictureAsync({
+          base64: true,
+          quality: 0.8,
+        });
+        
+        if (photo.base64) {
+          let analysisResult: FaceAnalysisResult;
+          
+          // Always use local TensorFlow.js models
+          console.log('🧠 Using local TensorFlow.js models for analysis');
+          analysisResult = await localFaceAnalysisService.analyzeFaceFromBase64(photo.base64);
+          
+          setIsVerified(true);
+          setIsVerifying(false);
+          setDetectedProfile(analysisResult);
+          
+          // Auto-proceed after showing results
+          setTimeout(() => {
+            router.replace('/(tabs)');
+          }, 2500);
+        } else {
+          throw new Error('Failed to capture image');
+        }
+      } else {
+        throw new Error('Camera not available');
+      }
+    } catch (error) {
+      console.error('Verification failed:', error);
       setIsVerifying(false);
       
-      // Simulate detected profile data
+      // Show fallback result
       setDetectedProfile({
-        ageGroup: 'Adult',
-        emotion: 'Happy',
-        confidence: 95,
-        timestamp: new Date().toLocaleTimeString(),
+        success: false,
+        ageGroup: 'Unknown',
+        emotion: 'Unknown',
+        emotionConfidence: 0,
+        confidence: 0,
+        timestamp: new Date().toISOString(),
+        message: 'Local analysis failed'
       });
       
-      // Auto-proceed after showing results
-      setTimeout(() => {
-        router.replace('/(tabs)');
-      }, 2500);
-    }, 3000);
+      Alert.alert('Verification Failed', 'Unable to analyze face with local models. Please try again.');
+    }
   };
 
   const handleSkip = () => {
     router.replace('/(tabs)');
+  };
+
+  const handleTestModels = async () => {
+    console.log('🧪 Starting model tests...');
+    try {
+      const testResults = await runAllTests();
+      Alert.alert(
+        'Model Test Results',
+        `Overall: ${testResults.overall ? 'PASSED' : 'FAILED'}\n\n` +
+        `TensorFlow.js: ${testResults.tests.tensorFlow.success ? '✅' : '❌'}\n` +
+        `Model Loading: ${testResults.tests.modelLoading.success ? '✅' : '❌'}\n` +
+        `Face Analysis: ${testResults.tests.faceAnalysis.success ? '✅' : '❌'}\n\n` +
+        `Memory: ${testResults.memoryInfo || 'N/A'}`
+      );
+    } catch (error) {
+      Alert.alert('Test Error', error instanceof Error ? error.message : 'Unknown error');
+    }
   };
 
   if (!permission) {
@@ -130,11 +192,33 @@ export default function FaceVerification() {
               <View style={styles.profileRow}>
                 <User color="#4CAF50" size={18} />
                 <Text style={styles.profileText}>Age Group: {detectedProfile.ageGroup}</Text>
+                {('age' in detectedProfile && detectedProfile.age !== undefined && detectedProfile.age !== null) && (
+                  <Text style={styles.profileSubText}> ({detectedProfile.age} years)</Text>
+                )}
               </View>
+              {('gender' in detectedProfile && detectedProfile.gender) && (
+                <View style={styles.profileRow}>
+                  <User color="#4CAF50" size={18} />
+                  <Text style={styles.profileText}>Gender: {detectedProfile.gender}</Text>
+                  {('genderConfidence' in detectedProfile && detectedProfile.genderConfidence !== undefined && detectedProfile.genderConfidence !== null) && (
+                    <Text style={styles.profileSubText}> ({detectedProfile.genderConfidence}%)</Text>
+                  )}
+                </View>
+              )}
               <View style={styles.profileRow}>
                 <Smile color="#4CAF50" size={18} />
                 <Text style={styles.profileText}>Emotion: {detectedProfile.emotion}</Text>
+                {('emotionConfidence' in detectedProfile && detectedProfile.emotionConfidence !== undefined && detectedProfile.emotionConfidence !== null) && (
+                  <Text style={styles.profileSubText}> ({detectedProfile.emotionConfidence}%)</Text>
+                )}
               </View>
+              <View style={styles.profileRow}>
+                <Shield color="#4CAF50" size={18} />
+                <Text style={styles.profileText}>Overall Confidence: {detectedProfile.confidence}%</Text>
+              </View>
+              {detectedProfile.message && (
+                <Text style={styles.profileMessage}>{detectedProfile.message}</Text>
+              )}
             </View>
             
             <Text style={styles.redirectText}>Redirecting to main app...</Text>
@@ -182,6 +266,10 @@ export default function FaceVerification() {
             </Text>
           </TouchableOpacity>
           
+          <TouchableOpacity style={styles.testButton} onPress={handleTestModels}>
+            <Text style={styles.testButtonText}>Test Models</Text>
+          </TouchableOpacity>
+          
           <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
             <Text style={styles.skipButtonText}>Skip</Text>
           </TouchableOpacity>
@@ -196,6 +284,14 @@ export default function FaceVerification() {
           <View style={styles.infoRow}>
             <Smile color="white" size={16} />
             <Text style={styles.infoText}>Enhanced experience</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Shield color={backendStatus ? '#4CAF50' : '#FFC107'} size={16} />
+            <Text style={styles.infoText}>
+              {backendStatus 
+                ? 'Local TensorFlow.js Models Ready' 
+                : 'Loading Local AI Models...'}
+            </Text>
           </View>
         </View>
       </Animated.View>
@@ -334,6 +430,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  testButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: 1,
+    borderColor: 'white',
+    borderRadius: 25,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  testButtonText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
   skipButton: {
     backgroundColor: 'transparent',
     borderWidth: 2,
@@ -416,5 +526,17 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
     marginTop: 20,
+  },
+  profileMessage: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 10,
+    fontStyle: 'italic',
+  },
+  profileSubText: {
+    fontSize: 14,
+    color: '#666',
+    fontStyle: 'italic',
   },
 });
