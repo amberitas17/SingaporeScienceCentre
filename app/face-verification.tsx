@@ -192,29 +192,20 @@ export default function FaceVerification() {
               <View style={styles.profileRow}>
                 <User color="#4CAF50" size={18} />
                 <Text style={styles.profileText}>Age Group: {detectedProfile.ageGroup}</Text>
-                {('age' in detectedProfile && detectedProfile.age !== undefined && detectedProfile.age !== null) && (
-                  <Text style={styles.profileSubText}> ({detectedProfile.age} years)</Text>
-                )}
               </View>
               {('gender' in detectedProfile && detectedProfile.gender) && (
                 <View style={styles.profileRow}>
                   <User color="#4CAF50" size={18} />
                   <Text style={styles.profileText}>Gender: {detectedProfile.gender}</Text>
-                  {('genderConfidence' in detectedProfile && detectedProfile.genderConfidence !== undefined && detectedProfile.genderConfidence !== null) && (
-                    <Text style={styles.profileSubText}> ({detectedProfile.genderConfidence}%)</Text>
-                  )}
                 </View>
               )}
               <View style={styles.profileRow}>
                 <Smile color="#4CAF50" size={18} />
                 <Text style={styles.profileText}>Emotion: {detectedProfile.emotion}</Text>
-                {('emotionConfidence' in detectedProfile && detectedProfile.emotionConfidence !== undefined && detectedProfile.emotionConfidence !== null) && (
-                  <Text style={styles.profileSubText}> ({detectedProfile.emotionConfidence}%)</Text>
-                )}
               </View>
               <View style={styles.profileRow}>
                 <Shield color="#4CAF50" size={18} />
-                <Text style={styles.profileText}>Overall Confidence: {detectedProfile.confidence}%</Text>
+                <Text style={styles.profileText}>Analysis Complete</Text>
               </View>
               {detectedProfile.message && (
                 <Text style={styles.profileMessage}>{detectedProfile.message}</Text>
