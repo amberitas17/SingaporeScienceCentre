@@ -1,22 +1,5 @@
 # Singapore Science Centre - AI Vision System
 
-An interactive AI vision system for age, gender, and emotion detection using React Native (Expo) and Python backend.
-
-## 🏗️ Architecture
-
-This application now uses a **Python backend API** for AI model inference:
-
-```
-┌─────────────────────┐    HTTP API    ┌─────────────────────┐
-│   Expo React App   │ ──────────────► │   Python Backend   │
-│   (Port 8081)      │                 │   (Port 5000)       │
-│                     │                 │                     │
-│ • Camera Interface  │                 │ • TensorFlow Models │
-│ • Face Verification │                 │ • Image Processing  │
-│ • Results Display   │                 │ • Face Detection    │
-└─────────────────────┘                 └─────────────────────┘
-```
-
 ## 🚀 Quick Start
 
 ### Prerequisites
