@@ -1,12 +1,5 @@
 # Singapore Science Centre - AI Vision System
 
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.8+
-- Node.js 18+
-- Model files in `assets/AGE/` and `assets/EMOTION/`
-
 ### Start Everything at Once
    ```bash
 python start-all.py
