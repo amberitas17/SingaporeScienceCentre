@@ -6,27 +6,6 @@
 - Expo Camera
 - React Navigation
 
-**Backend:**
-- Python Flask
-- TensorFlow/Keras
-- OpenCV
-- PIL (Pillow)
-- NumPy
-
-## 🧪 Testing
-
-### Backend API Test
-```bash
-curl http://localhost:5000/health
-```
-
-### Face Analysis Test
-```bash
-curl -X POST http://localhost:5000/analyze-face-simple \
-  -H "Content-Type: application/json" \
-  -d '{"image": "base64_encoded_image_string"}'
-```
-
 ## 📊 Performance
 
 - **Model Loading**: 10-30 seconds on startup
