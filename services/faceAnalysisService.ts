@@ -1,7 +1,9 @@
 /**
  * Face Analysis Service
- * Handles communication with the Python backend API for age/gender and emotion detection
+ * Handles communication with the Python Flask backend API for age/gender and emotion detection
  */
+
+import { getApiUrl } from './config';
 
 export interface FaceAnalysisResult {
   success: boolean;
@@ -62,7 +64,9 @@ export interface ModelStatus {
 class FaceAnalysisService {
   private baseUrl: string;
   
-  constructor(baseUrl: string = 'http://localhost:5000') {
+  // For mobile development, use your computer's IP address instead of localhost
+  // Configuration is now handled in services/config.ts
+  constructor(baseUrl: string = getApiUrl()) {
     this.baseUrl = baseUrl;
   }
 
@@ -96,42 +100,64 @@ class FaceAnalysisService {
    */
   async checkHealth(): Promise<boolean> {
     try {
+      console.log(`🔗 Attempting to connect to Flask backend at: ${this.baseUrl}/health`);
+      
       const response = await fetch(`${this.baseUrl}/health`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-        },
+        }
       });
 
       if (!response.ok) {
+        console.error(`❌ Flask backend health check failed with status: ${response.status}`);
         return false;
       }
 
-      const data = await response.json();
-      return data.models_loaded?.age_gender && data.models_loaded?.emotion;
+      const result = await response.json();
+      const isHealthy = result.status === 'healthy' && 
+             result.models_loaded?.age_gender && 
+             result.models_loaded?.emotion;
+             
+      console.log(`✅ Flask backend health check result:`, result);
+      return isHealthy;
     } catch (error) {
-      console.error('Health check failed:', error);
+      console.error('❌ Flask backend health check failed:', error);
+      console.error(`🔧 Make sure Flask is running at: ${this.baseUrl}`);
+      console.error('🔧 Make sure your IP address is correct in services/config.ts');
+      console.error('🔧 Make sure your mobile device and computer are on the same network');
       return false;
     }
   }
 
   /**
-   * Get the status of loaded models
+   * Get model status from backend
    */
   async getModelStatus(): Promise<ModelStatus | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/models/status`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const healthResponse = await fetch(`${this.baseUrl}/health`);
+      
+      if (!healthResponse.ok) {
+        throw new Error(`HTTP error! status: ${healthResponse.status}`);
       }
 
-      return await response.json();
+      const healthResult = await healthResponse.json();
+      
+      // Transform health check result to ModelStatus format
+      // Based on actual training architecture
+      return {
+        age_gender_model: {
+          loaded: healthResult.models_loaded?.age_gender || false,
+          input_shape: healthResult.models_loaded?.age_gender ? '128x128x1' : null  // Training: Input((input_size)) → 128x128x1
+        },
+        emotion_model: {
+          loaded: healthResult.models_loaded?.emotion || false,
+          input_shape: healthResult.models_loaded?.emotion ? '48x48x1' : null      // Training: Input(shape=(48, 48, 1))
+        },
+        supported_formats: ['jpg', 'jpeg', 'png'],
+        age_groups: ['Child', 'Adult'],  // ≤17 = Child, ≥18 = Adult
+        emotions: ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']  // 7 classes with softmax
+      };
     } catch (error) {
       console.error('Failed to get model status:', error);
       return null;
@@ -148,7 +174,7 @@ class FaceAnalysisService {
       // Convert image to base64
       const base64Image = await this.imageUriToBase64(imageUri);
 
-      const response = await fetch(`${this.baseUrl}/analyze-face-simple`, {
+      const response = await fetch(`${this.baseUrl}/predict/combined`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -164,19 +190,24 @@ class FaceAnalysisService {
 
       const result = await response.json();
       
-      // Ensure we return a consistent format
+      if (!result.success) {
+        throw new Error(result.error || 'Analysis failed');
+      }
+
+      // Transform Flask response to expected format
+      const predictions = result.predictions;
+      
       return {
-        success: result.success || false,
-        age: result.age,
-        ageGroup: result.ageGroup || 'Unknown',
-        gender: result.gender,
-        genderConfidence: result.genderConfidence,
-        emotion: result.emotion || 'Unknown',
-        emotionConfidence: result.emotionConfidence,
-        allEmotions: result.allEmotions,
-        confidence: result.confidence || 0,
-        timestamp: result.timestamp || new Date().toISOString(),
-        message: result.message
+        success: true,
+        age: predictions.age.value,        // Actual predicted age number
+        ageGroup: predictions.age.group,   // "Child" or "Adult"
+        gender: predictions.gender.label,
+        genderConfidence: predictions.gender.confidence,
+        emotion: predictions.emotion.label,
+        emotionConfidence: predictions.emotion.confidence,
+        allEmotions: predictions.all_emotions,
+        confidence: Math.max(predictions.age.confidence, predictions.gender.confidence, predictions.emotion.confidence),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       console.error('Face analysis failed:', error);
@@ -203,35 +234,7 @@ class FaceAnalysisService {
       // Convert image to base64
       const base64Image = await this.imageUriToBase64(imageUri);
 
-      const response = await fetch(`${this.baseUrl}/analyze-face`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          image: base64Image
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Detailed face analysis failed:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Analyze face from base64 image data (for when you already have base64)
-   * @param base64Image - Base64 encoded image string
-   * @returns Simple analysis result
-   */
-  async analyzeFaceFromBase64(base64Image: string): Promise<FaceAnalysisResult> {
-    try {
-      const response = await fetch(`${this.baseUrl}/analyze-face-simple`, {
+      const response = await fetch(`${this.baseUrl}/predict/combined`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -247,21 +250,112 @@ class FaceAnalysisService {
 
       const result = await response.json();
       
+      if (!result.success) {
+        throw new Error(result.error || 'Analysis failed');
+      }
+
+      // Transform Flask response to detailed format
+      const predictions = result.predictions;
+      
       return {
-        success: result.success || false,
-        age: result.age,
-        ageGroup: result.ageGroup || 'Unknown',
-        gender: result.gender,
-        genderConfidence: result.genderConfidence,
-        emotion: result.emotion || 'Unknown',
-        emotionConfidence: result.emotionConfidence,
-        allEmotions: result.allEmotions,
-        confidence: result.confidence || 0,
-        timestamp: result.timestamp || new Date().toISOString(),
-        message: result.message
+        success: true,
+        message: 'Analysis completed successfully',
+        timestamp: new Date().toISOString(),
+        results: [{
+          face_id: 1,
+          coordinates: {
+            x: 0,
+            y: 0,
+            width: 128,
+            height: 128
+          },
+          age: {
+            predicted_age: predictions.age.value,
+            age_group: predictions.age.group
+          },
+          gender: {
+            predicted_gender: predictions.gender.label,
+            confidence: predictions.gender.confidence
+          },
+          emotion: {
+            predicted_emotion: predictions.emotion.label,
+            confidence: predictions.emotion.confidence,
+            all_emotions: predictions.all_emotions
+          }
+        }]
       };
     } catch (error) {
-      console.error('Face analysis from base64 failed:', error);
+      console.error('Detailed face analysis failed:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Analyze face from base64 image data (for when you already have base64)
+   * @param base64Image - Base64 encoded image string
+   * @returns Simple analysis result
+   */
+  async analyzeFaceFromBase64(base64Image: string): Promise<FaceAnalysisResult> {
+    try {
+      console.log(`🧠 Sending image to Flask backend at: ${this.baseUrl}/predict/combined`);
+      
+      const response = await fetch(`${this.baseUrl}/predict/combined`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: base64Image
+        })
+      });
+
+      if (!response.ok) {
+        console.error(`❌ Flask backend returned status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('📋 Flask backend response:', result);
+      
+      if (!result.success) {
+        // Handle specific error cases (like no face detected)
+        if (result.message || result.error) {
+          console.warn('⚠️ Face analysis failed:', result.message || result.error);
+          return {
+            success: false,
+            ageGroup: 'Unknown',
+            emotion: 'Unknown',
+            confidence: 0,
+            timestamp: new Date().toISOString(),
+            message: result.message || result.error || 'Analysis failed'
+          };
+        }
+        throw new Error(result.error || 'Analysis failed');
+      }
+
+      // Transform Flask response to expected format
+      const predictions = result.predictions;
+      
+      const analysisResult = {
+        success: true,
+        age: predictions.age.value,        // Actual predicted age number
+        ageGroup: predictions.age.group,   // "Child" or "Adult"
+        gender: predictions.gender.label,
+        genderConfidence: predictions.gender.confidence,
+        emotion: predictions.emotion.label,
+        emotionConfidence: predictions.emotion.confidence,
+        allEmotions: predictions.all_emotions,
+        confidence: Math.max(predictions.age.confidence, predictions.gender.confidence, predictions.emotion.confidence),
+        timestamp: new Date().toISOString()
+      };
+      
+      console.log('✅ Analysis completed successfully:', analysisResult);
+      return analysisResult;
+    } catch (error) {
+      console.error('❌ Face analysis from base64 failed:', error);
+      console.error(`🔧 Flask backend URL: ${this.baseUrl}`);
+      console.error('🔧 Check if Flask backend is running with: python app.py');
+      console.error('🔧 Check if your IP address is correct in services/config.ts');
       
       return {
         success: false,
@@ -269,7 +363,7 @@ class FaceAnalysisService {
         emotion: 'Unknown',
         confidence: 0,
         timestamp: new Date().toISOString(),
-        message: error instanceof Error ? error.message : 'Analysis failed'
+        message: error instanceof Error ? error.message : 'Network connection failed'
       };
     }
   }
@@ -287,6 +381,8 @@ class FaceAnalysisService {
   getBaseUrl(): string {
     return this.baseUrl;
   }
+
+
 }
 
 // Export a singleton instance

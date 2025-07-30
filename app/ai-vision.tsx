@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView, Image, Modal } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { faceAnalysisService } from '../services/faceAnalysisService';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -41,61 +42,8 @@ import {
 
 const { width, height } = Dimensions.get('window');
 
-// Mock AI Detection Data - Science Centre Singapore Visitors
-const mockFaceDetections = [
-  {
-    id: 1,
-    boundingBox: { x: 0.25, y: 0.15, width: 0.2, height: 0.35 },
-    age: 'Child',
-    ageConfidence: 0.92,
-    emotion: 'Happy',
-    emotionConfidence: 0.88,
-    engagement: 'High',
-    attentionLevel: 0.85,
-    demographics: { estimatedAge: 8, gender: 'Unknown' },
-    visitContext: 'Excited about hands-on STEM activities',
-    recommendedArea: 'KidsSTOP'
-  },
-  {
-    id: 2,
-    boundingBox: { x: 0.55, y: 0.12, width: 0.22, height: 0.38 },
-    age: 'Adult',
-    ageConfidence: 0.96,
-    emotion: 'Interested',
-    emotionConfidence: 0.82,
-    engagement: 'Medium',
-    attentionLevel: 0.73,
-    demographics: { estimatedAge: 35, gender: 'Unknown' },
-    visitContext: 'Parent accompanying child, interested in science',
-    recommendedArea: 'Future Tech Exhibition'
-  },
-  {
-    id: 3,
-    boundingBox: { x: 0.1, y: 0.45, width: 0.18, height: 0.32 },
-    age: 'Child',
-    ageConfidence: 0.89,
-    emotion: 'Confused',
-    emotionConfidence: 0.75,
-    engagement: 'Low',
-    attentionLevel: 0.45,
-    demographics: { estimatedAge: 6, gender: 'Unknown' },
-    visitContext: 'First-time visitor needing guidance',
-    recommendedArea: 'Climate Changed Interactive Displays'
-  },
-  {
-    id: 4,
-    boundingBox: { x: 0.72, y: 0.28, width: 0.19, height: 0.33 },
-    age: 'Adult',
-    ageConfidence: 0.94,
-    emotion: 'Focused',
-    emotionConfidence: 0.91,
-    engagement: 'High',
-    attentionLevel: 0.89,
-    demographics: { estimatedAge: 42, gender: 'Unknown' },
-    visitContext: 'Science educator or researcher',
-    recommendedArea: 'Advanced Research Displays'
-  }
-];
+// Real-time face detection data will be populated from actual camera analysis
+// Removed mock data - now using only real AI model outputs
 
 const emotionColors = {
   Happy: '#4CAF50',
@@ -133,6 +81,9 @@ export default function AIVision() {
   const [showLocationSelector, setShowLocationSelector] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
   const [showPermissionDenied, setShowPermissionDenied] = useState(false);
+  
+  // Camera reference for taking pictures
+  const cameraRef = useRef<any>(null);
 
   // Exhibition locations with their monitoring data
   const exhibitLocations = {
@@ -186,6 +137,73 @@ export default function AIVision() {
     }
   };
 
+  // Real AI analysis function using Flask backend
+  const performRealAIAnalysis = async () => {
+    try {
+      if (selectedMode === 'camera' && cameraRef.current) {
+        console.log('📸 Taking picture for AI analysis...');
+        
+        // Take a picture
+        const photo = await cameraRef.current.takePictureAsync({
+          base64: true,
+          quality: 0.8,
+        });
+
+        if (photo.base64) {
+          console.log('🧠 Analyzing image with Flask backend...');
+          
+          // Send to Flask backend for analysis
+          const analysisResult = await faceAnalysisService.analyzeFaceFromBase64(photo.base64);
+          
+          if (analysisResult.success) {
+            // Transform result to match expected format
+            const detectedFace = {
+              id: 1,
+              boundingBox: { x: 0.3, y: 0.2, width: 0.4, height: 0.5 },
+              age: analysisResult.ageGroup || 'Unknown',          // "Child" or "Adult"
+              ageConfidence: analysisResult.confidence || 0.5,
+              emotion: analysisResult.emotion || 'Unknown',
+              emotionConfidence: analysisResult.emotionConfidence || 0.5,
+              engagement: (analysisResult.emotionConfidence || 0) > 0.7 ? 'High' : 'Medium',
+              attentionLevel: analysisResult.emotionConfidence || 0.5,
+              demographics: { 
+                estimatedAge: analysisResult.age || 25,           // Actual age number from model
+                // Gender removed from display 
+              },
+              visitContext: `Real-time analysis - Age: ${analysisResult.age || 'Unknown'}, ${analysisResult.emotion}`,
+              recommendedArea: analysisResult.ageGroup === 'Child' ? 'KidsSTOP' : 'Future Tech Exhibition'
+            };
+
+            console.log('✅ Analysis complete:', detectedFace);
+            setDetectedFaces([detectedFace]);
+            setIsAnalyzing(false);
+            setAnalysisComplete(true);
+            fadeValue.value = withTiming(1, { duration: 500 });
+          } else {
+            throw new Error(analysisResult.message || 'Analysis failed');
+          }
+        } else {
+          throw new Error('Failed to capture image');
+        }
+      } else {
+        // No mock data - only real face analysis from camera
+        console.log('📊 Real-time analysis only (no mock data)');
+        setDetectedFaces([]);
+        setIsAnalyzing(false);
+        setAnalysisComplete(true);
+        fadeValue.value = withTiming(1, { duration: 500 });
+      }
+    } catch (error) {
+      console.error('❌ AI Analysis failed:', error);
+      
+              // Clear faces on error - no mock data
+        setDetectedFaces([]);
+      setIsAnalyzing(false);
+      setAnalysisComplete(true);
+      fadeValue.value = withTiming(1, { duration: 500 });
+    }
+  };
+
   // Animation values
   const scanProgress = useSharedValue(0);
   const pulseValue = useSharedValue(1);
@@ -195,15 +213,12 @@ export default function AIVision() {
     // Start analysis animation
     pulseValue.value = withRepeat(withTiming(1.2, { duration: 1000 }), -1, true);
     
-    // Only start simulation if mode is not camera or if camera mode and camera is ready
+    // Only start analysis if mode is selected and camera is ready (for camera mode)
     if (selectedMode === 'upload' || (selectedMode === 'camera' && cameraReady)) {
-    // Simulate AI analysis process
-    setTimeout(() => {
-      setDetectedFaces(mockFaceDetections);
-      setIsAnalyzing(false);
-      setAnalysisComplete(true);
-      fadeValue.value = withTiming(1, { duration: 500 });
-    }, 3000);
+      // Perform real AI analysis with a slight delay for better UX
+      setTimeout(() => {
+        performRealAIAnalysis();
+      }, 2000);
     }
 
     // Simulate real-time updates
@@ -541,19 +556,12 @@ export default function AIVision() {
           {selectedMode === 'camera' ? (
             // Live Camera View
             <CameraView 
+              ref={cameraRef}
               style={styles.cameraView}
               facing="back"
               onCameraReady={() => {
                 setCameraReady(true);
-                // Start analysis after camera is ready
-                if (!isAnalyzing && !analysisComplete) {
-                  setTimeout(() => {
-                    setDetectedFaces(mockFaceDetections);
-                    setIsAnalyzing(false);
-                    setAnalysisComplete(true);
-                    fadeValue.value = withTiming(1, { duration: 500 });
-                  }, 1500);
-                }
+                console.log('📷 Camera ready for AI analysis');
               }}
             />
           ) : (
@@ -691,7 +699,7 @@ export default function AIVision() {
               setTimeout(() => {
                 setIsAnalyzing(false);
                 setAnalysisComplete(true);
-                      setDetectedFaces(mockFaceDetections);
+                      setDetectedFaces([]);
                       fadeValue.value = withTiming(1, { duration: 500 });
               }, 2000);
             }}

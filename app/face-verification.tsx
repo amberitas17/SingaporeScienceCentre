@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Alert } from 'rea
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -10,20 +11,22 @@ import Animated, {
   withRepeat,
   interpolate,
 } from 'react-native-reanimated';
-import { Camera, Shield, CheckCircle, User, Settings, Smile } from 'lucide-react-native';
-import { localFaceAnalysisService, FaceAnalysisResult } from '../services/localFaceAnalysisService';
-import { runAllTests } from '../services/modelTestUtils';
+import { Camera, Shield, CheckCircle, User, Settings, Smile, Upload } from 'lucide-react-native';
+import { faceAnalysisService, FaceAnalysisResult } from '../services/faceAnalysisService';
+import { useFaceVerification } from './contexts/FaceVerificationContext';
 
 const { width, height } = Dimensions.get('window');
 
 export default function FaceVerification() {
   const router = useRouter();
+  const { setVerificationResult } = useFaceVerification();
   const [permission, requestPermission] = useCameraPermissions();
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [detectedProfile, setDetectedProfile] = useState<FaceAnalysisResult | null>(null);
   const [facing, setFacing] = useState<CameraType>('front');
   const [backendStatus, setBackendStatus] = useState<boolean | null>(null);
+  const [selectedMode, setSelectedMode] = useState<'camera' | 'upload' | null>(null);
   const cameraRef = useRef<CameraView>(null);
   
   const fadeValue = useSharedValue(0);
@@ -38,14 +41,14 @@ export default function FaceVerification() {
   }, []);
 
   const checkBackendHealth = async () => {
-    const isHealthy = await localFaceAnalysisService.checkHealth();
+          const isHealthy = await faceAnalysisService.checkHealth();
     setBackendStatus(isHealthy);
     
-    if (!isHealthy) {
-      console.warn('Local TensorFlow.js models not available. Loading models...');
-    } else {
-      console.log('✅ Local TensorFlow.js models loaded and ready!');
-    }
+          if (!isHealthy) {
+        console.warn('Flask backend not available. Please check connection.');
+      } else {
+        console.log('✅ Flask backend models loaded and ready!');
+      }
   };
 
   useEffect(() => {
@@ -92,13 +95,35 @@ export default function FaceVerification() {
         if (photo.base64) {
           let analysisResult: FaceAnalysisResult;
           
-          // Always use local TensorFlow.js models
-          console.log('🧠 Using local TensorFlow.js models for analysis');
-          analysisResult = await localFaceAnalysisService.analyzeFaceFromBase64(photo.base64);
+          // Use Flask backend for analysis
+          console.log('🧠 Using Flask backend for analysis');
+          analysisResult = await faceAnalysisService.analyzeFaceFromBase64(photo.base64);
+          
+          // Check if analysis failed (e.g., no face detected)
+          if (!analysisResult.success && analysisResult.message) {
+            setIsVerifying(false);
+            Alert.alert('Face Detection Failed', analysisResult.message);
+            return;
+          }
           
           setIsVerified(true);
           setIsVerifying(false);
           setDetectedProfile(analysisResult);
+          
+          // Save to context for sharing across tabs
+          setVerificationResult({
+            success: analysisResult.success,
+            age: analysisResult.age || 25,
+            ageGroup: analysisResult.ageGroup || 'Adult',
+            gender: analysisResult.gender || 'Unknown',
+            genderConfidence: analysisResult.genderConfidence || 0,
+            emotion: analysisResult.emotion || 'Neutral',
+            emotionConfidence: analysisResult.emotionConfidence || 0,
+            allEmotions: analysisResult.allEmotions || {},
+            confidence: analysisResult.confidence || 0,
+            timestamp: analysisResult.timestamp || new Date().toISOString(),
+            message: analysisResult.message
+          });
           
           // Auto-proceed after showing results
           setTimeout(() => {
@@ -125,7 +150,7 @@ export default function FaceVerification() {
         message: 'Local analysis failed'
       });
       
-      Alert.alert('Verification Failed', 'Unable to analyze face with local models. Please try again.');
+              Alert.alert('Verification Failed', 'Unable to analyze face with Flask backend. Please check your connection and try again.');
     }
   };
 
@@ -133,22 +158,79 @@ export default function FaceVerification() {
     router.replace('/(tabs)');
   };
 
-  const handleTestModels = async () => {
-    console.log('🧪 Starting model tests...');
+  const handleUploadPhoto = async () => {
     try {
-      const testResults = await runAllTests();
-      Alert.alert(
-        'Model Test Results',
-        `Overall: ${testResults.overall ? 'PASSED' : 'FAILED'}\n\n` +
-        `TensorFlow.js: ${testResults.tests.tensorFlow.success ? '✅' : '❌'}\n` +
-        `Model Loading: ${testResults.tests.modelLoading.success ? '✅' : '❌'}\n` +
-        `Face Analysis: ${testResults.tests.faceAnalysis.success ? '✅' : '❌'}\n\n` +
-        `Memory: ${testResults.memoryInfo || 'N/A'}`
-      );
+      // Request permission
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (permissionResult.granted === false) {
+        Alert.alert('Permission Denied', 'You need to grant camera roll permissions to upload photos.');
+        return;
+      }
+
+      // Launch image picker
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+        base64: true,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        const asset = result.assets[0];
+        if (asset.base64) {
+          setIsVerifying(true);
+          
+          console.log('🖼️ Processing uploaded image with Flask backend');
+          const analysisResult = await faceAnalysisService.analyzeFaceFromBase64(asset.base64);
+          
+          // Check if analysis failed (e.g., no face detected)
+          if (!analysisResult.success && analysisResult.message) {
+            setIsVerifying(false);
+            Alert.alert('Face Detection Failed', analysisResult.message);
+            return;
+          }
+          
+          setIsVerified(true);
+          setIsVerifying(false);
+          setDetectedProfile(analysisResult);
+          
+          // Save to context for sharing across tabs
+          setVerificationResult({
+            success: analysisResult.success,
+            age: analysisResult.age || 25,
+            ageGroup: analysisResult.ageGroup || 'Adult',
+            gender: analysisResult.gender || 'Unknown',
+            genderConfidence: analysisResult.genderConfidence || 0,
+            emotion: analysisResult.emotion || 'Neutral',
+            emotionConfidence: analysisResult.emotionConfidence || 0,
+            allEmotions: analysisResult.allEmotions || {},
+            confidence: analysisResult.confidence || 0,
+            timestamp: analysisResult.timestamp || new Date().toISOString(),
+            message: analysisResult.message
+          });
+          
+          // Auto-proceed after showing results
+          setTimeout(() => {
+            router.replace('/(tabs)');
+          }, 2500);
+        } else {
+          throw new Error('Failed to get image data');
+        }
+      }
     } catch (error) {
-      Alert.alert('Test Error', error instanceof Error ? error.message : 'Unknown error');
+      console.error('Photo upload failed:', error);
+      setIsVerifying(false);
+      
+      Alert.alert(
+        'Upload Error',
+        error instanceof Error ? error.message : 'Failed to process uploaded photo'
+      );
     }
   };
+
+
 
   if (!permission) {
     return (
@@ -193,12 +275,7 @@ export default function FaceVerification() {
                 <User color="#4CAF50" size={18} />
                 <Text style={styles.profileText}>Age Group: {detectedProfile.ageGroup}</Text>
               </View>
-              {('gender' in detectedProfile && detectedProfile.gender) && (
-                <View style={styles.profileRow}>
-                  <User color="#4CAF50" size={18} />
-                  <Text style={styles.profileText}>Gender: {detectedProfile.gender}</Text>
-                </View>
-              )}
+
               <View style={styles.profileRow}>
                 <Smile color="#4CAF50" size={18} />
                 <Text style={styles.profileText}>Emotion: {detectedProfile.emotion}</Text>
@@ -252,13 +329,19 @@ export default function FaceVerification() {
             onPress={handleStartVerification}
             disabled={isVerifying}
           >
+            <Camera color="white" size={20} />
             <Text style={styles.startButtonText}>
-              {isVerifying ? 'Verifying...' : 'Start Verification'}
+              {isVerifying ? 'Verifying...' : 'Take Photo'}
             </Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.testButton} onPress={handleTestModels}>
-            <Text style={styles.testButtonText}>Test Models</Text>
+          <TouchableOpacity 
+            style={styles.uploadButton}
+            onPress={handleUploadPhoto}
+            disabled={isVerifying}
+          >
+            <Upload color="white" size={20} />
+            <Text style={styles.uploadButtonText}>Upload Photo</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
@@ -280,8 +363,8 @@ export default function FaceVerification() {
             <Shield color={backendStatus ? '#4CAF50' : '#FFC107'} size={16} />
             <Text style={styles.infoText}>
               {backendStatus 
-                ? 'Local TensorFlow.js Models Ready' 
-                : 'Loading Local AI Models...'}
+                ? 'Flask AI Models Ready' 
+                : 'Loading AI Models...'}
             </Text>
           </View>
         </View>
@@ -415,9 +498,29 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 40,
     marginBottom: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
   },
   startButtonText: {
     color: '#FF6B35',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  uploadButton: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    marginBottom: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  uploadButtonText: {
+    color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },

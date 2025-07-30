@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Image
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
+import { useFaceVerification } from '../contexts/FaceVerificationContext';
 import { 
   Ticket, 
   Users, 
@@ -104,17 +105,13 @@ const ticketCategories = {
 
 export default function Tickets() {
   const router = useRouter();
+  const { verificationResult, getVisitorProfile, isVerified } = useFaceVerification();
+  const guestProfile = getVisitorProfile();
+  
   const [selectedCategory, setSelectedCategory] = useState<'single' | 'combo' | 'experience'>('single');
   const [selectedTickets, setSelectedTickets] = useState<{[key: string]: number}>({});
   const [totalAmount, setTotalAmount] = useState(0);
   const [showSummary, setShowSummary] = useState(false);
-  const [guestProfile] = useState({
-    adults: 1,
-    children: 0,
-    totalGuests: 1,
-    dominantEmotion: 'Happy',
-    ageGroup: 'Adult' // Either 'Adult' or 'Child'
-  });
 
 
 
@@ -229,38 +226,27 @@ export default function Tickets() {
       <View key={ticket.id} style={styles.ticketCard}>
         {ticket.popular && (
           <View style={styles.popularBadge}>
-            <Star color="white" size={12} />
+            <Star color="white" size={10} />
             <Text style={styles.popularText}>POPULAR</Text>
           </View>
         )}
         
-        <LinearGradient
-          colors={[ticket.color, `${ticket.color}DD`]}
-          style={styles.ticketGradient}
-        >
+        <View style={styles.ticketContent}>
           <View style={styles.ticketHeader}>
-            <View style={styles.ticketInfo}>
-              <View style={styles.ticketTitleRow}>
-                <IconComponent color="white" size={24} />
-                <Text style={styles.ticketName}>{ticket.name}</Text>
-              </View>
-              <Text style={styles.ticketType}>{ticket.type.toUpperCase()}</Text>
+            <View style={styles.iconContainer}>
+              <IconComponent color="white" size={20} />
             </View>
+            
+            <View style={styles.ticketInfo}>
+              <Text style={styles.ticketName}>{ticket.name}</Text>
+              <Text style={styles.ticketType}>{ticket.type.toUpperCase()}</Text>
+              <Text style={styles.ticketDescription}>{ticket.description}</Text>
+            </View>
+            
             <View style={styles.priceContainer}>
               <Text style={styles.priceText}>${ticket.price}</Text>
               <Text style={styles.priceLabel}>per person</Text>
             </View>
-          </View>
-          
-          <Text style={styles.ticketDescription}>{ticket.description}</Text>
-          
-          <View style={styles.featuresContainer}>
-            {ticket.features.map((feature: string, index: number) => (
-              <View key={index} style={styles.featureItem}>
-                <Check color="white" size={14} />
-                <Text style={styles.featureText}>{feature}</Text>
-              </View>
-            ))}
           </View>
 
           {ticket.savings && (
@@ -270,33 +256,33 @@ export default function Tickets() {
               </Text>
             </View>
           )}
-        </LinearGradient>
-        
-        <View style={styles.ticketFooter}>
-          <View style={styles.quantityContainer}>
-            <TouchableOpacity
-              style={[styles.quantityButton, count === 0 && styles.quantityButtonDisabled]}
-              onPress={() => updateTicketCount(ticket.id, -1)}
-              disabled={count === 0}
-            >
-              <Minus color={count === 0 ? '#CCC' : '#FF6B35'} size={16} />
-            </TouchableOpacity>
-            
-            <Text style={styles.quantityText}>{count}</Text>
-            
-            <TouchableOpacity
-              style={styles.quantityButton}
-              onPress={() => updateTicketCount(ticket.id, 1)}
-            >
-              <Plus color="#FF6B35" size={16} />
-            </TouchableOpacity>
-          </View>
           
-          {count > 0 && (
-            <Text style={styles.subtotal}>
-              Subtotal: ${(ticket.price * count).toFixed(2)}
-            </Text>
-          )}
+          <View style={styles.ticketFooter}>
+            <View style={styles.quantityContainer}>
+              <TouchableOpacity
+                style={[styles.quantityButton, count === 0 && styles.quantityButtonDisabled]}
+                onPress={() => updateTicketCount(ticket.id, -1)}
+                disabled={count === 0}
+              >
+                <Minus color={count === 0 ? '#CCC' : '#FF6B35'} size={14} />
+              </TouchableOpacity>
+              
+              <Text style={styles.quantityText}>{count}</Text>
+              
+              <TouchableOpacity
+                style={styles.quantityButton}
+                onPress={() => updateTicketCount(ticket.id, 1)}
+              >
+                <Plus color="#FF6B35" size={14} />
+              </TouchableOpacity>
+            </View>
+            
+            {count > 0 && (
+              <Text style={styles.subtotal}>
+                Subtotal: ${(ticket.price * count).toFixed(2)}
+              </Text>
+            )}
+          </View>
         </View>
       </View>
     );
@@ -317,8 +303,10 @@ export default function Tickets() {
         {/* Clean Header */}
         <View style={styles.header}>
           <View style={styles.verificationBadge}>
-            <CheckCircle color="#4CAF50" size={20} />
-            <Text style={styles.verifiedText}>Camera Verified</Text>
+            <CheckCircle color={isVerified ? "#4CAF50" : "#9E9E9E"} size={20} />
+            <Text style={[styles.verifiedText, { color: isVerified ? "#4CAF50" : "#666" }]}>
+              {isVerified ? "Face Verified" : "Not Verified"}
+            </Text>
           </View>
           
           <View style={styles.headerIcon}>
@@ -327,7 +315,7 @@ export default function Tickets() {
           
           <Text style={styles.headerTitle}>Select Your Tickets</Text>
           <Text style={styles.headerSubtitle}>
-            Detected: 1 {guestProfile.ageGroup}
+            Detected: {guestProfile.detectedCount}
           </Text>
           <Text style={styles.headerEmotion}>
             Emotion: {guestProfile.dominantEmotion}
@@ -692,60 +680,72 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   ticketCard: {
-    borderRadius: 16,
+    borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: 'white',
-    elevation: 8,
+    elevation: 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowRadius: 4,
+    marginBottom: 12,
   },
   popularBadge: {
     position: 'absolute',
-    top: 15,
-    right: 15,
+    top: 10,
+    right: 10,
     backgroundColor: '#FF6B35',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 3,
     zIndex: 1,
   },
   popularText: {
     color: 'white',
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: 'bold',
   },
-  ticketGradient: {
-    padding: 20,
+  ticketContent: {
+    padding: 15,
   },
   ticketHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 15,
+    marginBottom: 10,
+  },
+  iconContainer: {
+    width: 35,
+    height: 35,
+    borderRadius: 17,
+    backgroundColor: '#FF6B35',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   ticketInfo: {
     flex: 1,
-  },
-  ticketTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
+    marginLeft: 12,
   },
   ticketName: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#333',
+    marginBottom: 3,
   },
   ticketType: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 10,
+    color: '#FF6B35',
     fontWeight: '600',
+    marginBottom: 3,
+    textTransform: 'uppercase',
+  },
+  ticketDescription: {
+    fontSize: 11,
+    color: '#666',
+    lineHeight: 16,
   },
   priceContainer: {
     alignItems: 'flex-end',
@@ -753,82 +753,69 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#FF6B35',
   },
   priceLabel: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.8)',
-  },
-  ticketDescription: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.9)',
-    marginBottom: 15,
-    lineHeight: 20,
-  },
-  featuresContainer: {
-    gap: 8,
-  },
-  featureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  featureText: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 10,
+    color: '#999',
   },
   savingsContainer: {
-    marginTop: 10,
-    padding: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 8,
+    marginTop: 8,
+    padding: 6,
+    backgroundColor: '#FFF3E0',
+    borderRadius: 6,
+    alignSelf: 'flex-start',
   },
   savingsText: {
-    fontSize: 12,
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontSize: 11,
+    color: '#FF6B35',
+    fontWeight: '600',
   },
-
+  
   // Ticket Footer Styles
   ticketFooter: {
-    padding: 20,
+    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: '#F0F0F0',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 20,
-    marginBottom: 10,
+    backgroundColor: '#F8F8F8',
+    borderRadius: 8,
+    padding: 2,
   },
   quantityButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#F5F5F5',
+    width: 30,
+    height: 30,
+    borderRadius: 6,
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#FF6B35',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   quantityButtonDisabled: {
-    borderColor: '#CCC',
+    backgroundColor: '#F5F5F5',
   },
   quantityText: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
-    minWidth: 30,
+    marginHorizontal: 15,
+    minWidth: 20,
     textAlign: 'center',
   },
   subtotal: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 12,
+    fontWeight: '600',
     color: '#FF6B35',
-    textAlign: 'center',
   },
 
   // Info Section Styles
@@ -917,5 +904,12 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
     marginTop: 4,
+  },
+  headerConfidence: {
+    fontSize: 12,
+    color: '#4CAF50',
+    textAlign: 'center',
+    marginTop: 2,
+    fontWeight: '600',
   },
 }); 
