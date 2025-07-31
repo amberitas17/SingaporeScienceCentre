@@ -29,10 +29,13 @@ This application uses a **hybrid AI approach** combining cloud and local inferen
 
 ### Start the Application
 
+IMPORTANT:
+Install python 3.10 to PATH (python version higher than 3.10 does not support some libraries such as mediapipe)
+
 #### Terminal 1 - Python Backend:
 ```bash
 cd backend
-python -m venv venv
+python3.10 -m venv venv
 
 # Windows
 venv\Scripts\activate
@@ -44,7 +47,32 @@ pip install -r requirements.txt
 python app.py
 ```
 
-#### Terminal 2 - React Native App:
+IMPORTANT: 
+Do not forget to change the localhost ip to your current ip address in config.ts
+
+#### Terminal 2 - Python Backend for Computer Vision:
+```bash
+cd backend
+
+# Windows
+venv\Scripts\activate
+
+# macOS/Linux
+source venv/bin/activate
+
+python yolov8_flask_api.py
+```
+
+IMPORTANT: 
+Edit the ip in features.tsx located in app/(tabs) to your current ip address
+const response = await fetch('http://192.168.1.5:5001/detect_base64'
+
+OTHER ISSUES AND POSSIBLE FIXES:
+- Install pip package on missing libraries
+- Set Terminal as Administrator
+- Turning off the Firewall
+
+#### Terminal 3 - React Native App:
 ```bash
 npm install
 npm run dev
