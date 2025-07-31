@@ -23,7 +23,11 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.singaporesciencecentre.app",
-      "jsEngine": "hermes"
+      "jsEngine": "hermes",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -45,6 +49,12 @@
     },
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c089a3c4-3c74-4af1-a227-5eba7dd14825"
+      }
+    }
   }
 }

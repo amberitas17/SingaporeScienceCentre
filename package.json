@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
-    "@lucide/lab": "^0.1.2",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
@@ -24,7 +23,6 @@
     "expo-file-system": "~18.1.11",
     "expo-font": "~13.3.2",
     "expo-gl": "~15.1.7",
-    "expo-gl-cpp": "^11.4.0",
     "expo-haptics": "~14.1.4",
     "expo-linear-gradient": "~14.1.5",
     "expo-linking": "~7.1.7",
@@ -36,13 +34,10 @@
     "expo-system-ui": "~5.0.10",
     "expo-web-browser": "~14.2.0",
     "lucide-react-native": "^0.475.0",
-    "path-browserify": "^1.0.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.5",
-    "react-native-crypto": "^2.2.1",
     "react-native-dropdown-picker": "^5.4.6",
-    "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-reanimated": "3.17.4",
     "react-native-safe-area-context": "5.4.0",
@@ -51,10 +46,9 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "^0.20.0",
     "react-native-webview": "13.13.5",
-    "readable-stream": "^4.7.0",
-    "text-encoding": "^0.7.0",
     "expo-image-picker": "~16.1.4",
-    "expo-sensors": "~14.1.4"
+    "expo-sensors": "~14.1.4",
+    "expo-dev-client": "~5.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
