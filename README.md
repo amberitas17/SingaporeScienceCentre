@@ -29,10 +29,13 @@ This application uses a **hybrid AI approach** combining cloud and local inferen
 
 ### Start the Application
 
+IMPORTANT:
+Install python 3.10 to PATH (python version higher than 3.10 does not support some libraries such as mediapipe)
+
 #### Terminal 1 - Python Backend:
 ```bash
 cd backend
-python -m venv venv
+python3.10 -m venv venv
 
 # Windows
 venv\Scripts\activate
@@ -44,7 +47,20 @@ pip install -r requirements.txt
 python app.py
 ```
 
-#### Terminal 2 - React Native App:
+#### Terminal 2 - Python Backend for Computer Vision:
+```bash
+cd backend
+
+# Windows
+venv\Scripts\activate
+
+# macOS/Linux
+source venv/bin/activate
+
+python yolov8_flask_api.py
+```
+
+#### Terminal 3 - React Native App:
 ```bash
 npm install
 npm run dev
