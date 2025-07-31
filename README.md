@@ -47,6 +47,9 @@ pip install -r requirements.txt
 python app.py
 ```
 
+IMPORTANT: 
+Do not forget to change the localhost ip to your current ip address in config.ts
+
 #### Terminal 2 - Python Backend for Computer Vision:
 ```bash
 cd backend
@@ -59,6 +62,15 @@ source venv/bin/activate
 
 python yolov8_flask_api.py
 ```
+
+IMPORTANT: 
+Edit the ip in features.tsx located in app/(tabs) to your current ip address
+const response = await fetch('http://192.168.1.5:5001/detect_base64'
+
+OTHER ISSUES AND POSSIBLE FIXES:
+- Install pip package on missing libraries
+- Set Terminal as Administrator
+- Turning off the Firewall
 
 #### Terminal 3 - React Native App:
 ```bash
