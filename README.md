@@ -65,7 +65,7 @@ python yolov8_flask_api.py
 
 IMPORTANT: 
 Edit the ip in features.tsx located in app/(tabs) to your current ip address
-const response = await fetch('http://192.168.1.5:5001/detect_base64'
+const response = await fetch('https://brightly-enormous-pigeon.ngrok-free.app/detect_base64',
 
 OTHER ISSUES AND POSSIBLE FIXES:
 - Install pip package on missing libraries
