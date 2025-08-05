@@ -29,6 +29,11 @@ This application uses a **hybrid AI approach** combining cloud and local inferen
 
 ### Start the Application
 
+FOR THE BACKEND
+- so basically, in previous versions of the app the backend can be started using Terminal 1 and Terminal 2
+- in a new updated version, I have unified the backends into one file which is the unify.py
+- In short, you have 2 options either activate Terminal 1 and 2 OR Terminal 4
+
 IMPORTANT:
 Install python 3.10 to PATH (python version higher than 3.10 does not support some libraries such as mediapipe)
 
@@ -78,7 +83,24 @@ npm install
 npm run dev
 ```
 
-> **Note**: Backend runs on port 5000, frontend on port 8081
+#### Terminal 4 - Python Backend for Computer Vision AND Emotion:
+```bash
+cd backend
+
+# Windows
+venv\Scripts\activate
+
+# macOS/Linux
+source venv/bin/activate
+
+pip install -r requirements.txt
+python unify.py
+```
+IMPORTANT: 
+Edit the ip in features.tsx located in app/(tabs) and config.ts to your current ip address
+const response = await fetch('http://192.168.1.10:5002/detect_base64',
+
+> **Note**: Backend runs on port 5000, 5001, 5002, frontend on port 8081
 
 ## 🧠 AI Models
 
