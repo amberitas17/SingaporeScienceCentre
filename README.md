@@ -38,6 +38,7 @@ IMPORTANT:
 Install python 3.10 to PATH (python version higher than 3.10 does not support some libraries such as mediapipe)
 
 #### Terminal 1 - Python Backend for Emotion:
+Do not forget to change the localhost ip to your current ip address in config.ts (you can check localhost by typing ipconfig and seeing the ipv4 address sample: 192.168.1.10)
 ```bash
 cd backend
 py -3.10 -m venv venv
@@ -52,10 +53,10 @@ pip install -r requirements.txt
 python app.py
 ```
 
-IMPORTANT: 
-Do not forget to change the localhost ip to your current ip address in config.ts (you can check localhost by typing ipconfig and seeing the ipv4 address sample: 192.168.1.10)
-
 #### Terminal 2 - Python Backend for Computer Vision:
+Edit the ip in features.tsx located in app/(tabs) to your current ip address
+const response = await fetch('http://192.168.1.10:5001/detect_base64',
+
 ```bash
 cd backend
 
@@ -68,10 +69,6 @@ source venv/bin/activate
 python yolov8_flask_api.py
 ```
 
-IMPORTANT: 
-Edit the ip in features.tsx located in app/(tabs) to your current ip address
-const response = await fetch('http://192.168.1.10:5001/detect_base64',
-
 OTHER ISSUES AND POSSIBLE FIXES:
 - Install pip package on missing libraries
 - Set Terminal as Administrator
@@ -83,8 +80,12 @@ npm install
 npm run dev
 ```
 
+
+#### Terminal 4 - Python Backend for Computer Vision AND Emotion: 
 !ONLY WORKS ON EXPO GO MOBILE APP!
-#### Terminal 4 - Python Backend for Computer Vision AND Emotion:
+Edit the ip in features.tsx located in app/(tabs) and config.ts to your current ip address
+const response = await fetch('http://192.168.1.10:5002/detect_base64',
+
 ```bash
 cd backend
 
@@ -97,9 +98,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 python unify.py
 ```
-IMPORTANT: 
-Edit the ip in features.tsx located in app/(tabs) and config.ts to your current ip address
-const response = await fetch('http://192.168.1.10:5002/detect_base64',
+
 
 > **Note**: Backend runs on port 5000, 5001, 5002, frontend on port 8081
 
