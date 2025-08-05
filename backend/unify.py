@@ -116,15 +116,42 @@ def load_models():
 def decode_base64_image(base64_string):
     """Decode base64 image string to OpenCV format"""
     try:
+        # Clean the base64 string
+        if not base64_string:
+            raise ValueError("Empty base64 string provided")
+            
         # Remove data URL prefix if present
         if ',' in base64_string:
             base64_string = base64_string.split(',')[1]
         
+        # Remove any whitespace and newlines
+        base64_string = base64_string.strip().replace('\n', '').replace('\r', '')
+        
+        # Fix padding if necessary
+        # Base64 strings should be divisible by 4
+        missing_padding = len(base64_string) % 4
+        if missing_padding:
+            base64_string += '=' * (4 - missing_padding)
+            
+        # Validate base64 string contains only valid characters
+        import string
+        valid_chars = string.ascii_letters + string.digits + '+/='
+        if not all(c in valid_chars for c in base64_string):
+            raise ValueError("Invalid characters in base64 string")
+        
         # Decode base64
         image_data = base64.b64decode(base64_string)
         
+        # Validate decoded data
+        if len(image_data) == 0:
+            raise ValueError("Decoded image data is empty")
+        
         # Convert to PIL Image
         pil_image = Image.open(io.BytesIO(image_data))
+        
+        # Validate image
+        if pil_image.size[0] == 0 or pil_image.size[1] == 0:
+            raise ValueError("Invalid image dimensions")
         
         # Convert to OpenCV format (BGR)
         opencv_image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
@@ -132,6 +159,8 @@ def decode_base64_image(base64_string):
         return opencv_image
     except Exception as e:
         logger.error(f"Error decoding base64 image: {str(e)}")
+        logger.error(f"Base64 string length: {len(base64_string) if 'base64_string' in locals() else 'unknown'}")
+        logger.error(f"Base64 string preview: {base64_string[:50] if 'base64_string' in locals() and len(base64_string) > 50 else 'N/A'}...")
         raise e
 
 # YOLO Exhibit Detection Functions

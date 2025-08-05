@@ -297,7 +297,30 @@ class FaceAnalysisService {
    */
   async analyzeFaceFromBase64(base64Image: string): Promise<FaceAnalysisResult> {
     try {
+      // Validate input
+      if (!base64Image || base64Image.trim().length === 0) {
+        throw new Error('Base64 image string is empty or null');
+      }
+      
+      // Clean the base64 string before sending
+      let cleanBase64 = base64Image.trim();
+      
+      // Remove data URL prefix if present
+      if (cleanBase64.includes(',')) {
+        cleanBase64 = cleanBase64.split(',')[1];
+      }
+      
+      // Remove any whitespace
+      cleanBase64 = cleanBase64.replace(/\s/g, '');
+      
+      // Validate base64 format
+      const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+      if (!base64Regex.test(cleanBase64)) {
+        throw new Error('Invalid base64 format');
+      }
+      
       console.log(`🧠 Sending image to Flask backend at: ${this.baseUrl}/predict/combined`);
+      console.log(`📏 Base64 string length: ${cleanBase64.length}`);
       
       const response = await fetch(`${this.baseUrl}/predict/combined`, {
         method: 'POST',
@@ -305,13 +328,15 @@ class FaceAnalysisService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          image: base64Image
+          image: cleanBase64
         })
       });
 
       if (!response.ok) {
         console.error(`❌ Flask backend returned status: ${response.status}`);
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error(`❌ Error response: ${errorText}`);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
 
       const result = await response.json();
