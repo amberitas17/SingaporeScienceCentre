@@ -31,7 +31,7 @@ This application uses a **hybrid AI approach** combining cloud and local inferen
 
 FOR THE BACKEND
 - so basically, in previous versions of the app the backend can be started using Terminal 1 and Terminal 2
-- in a new updated version, I have unified the backends into one file which is the unify.py
+- in a new updated version, I have unified the backends into one file which is the unify.py, downside is it only works on mobile app
 - In short, you have 2 options either activate Terminal 1 and 2 OR Terminal 4
 
 IMPORTANT:
@@ -83,6 +83,7 @@ npm install
 npm run dev
 ```
 
+!ONLY WORKS ON EXPO GO MOBILE APP!
 #### Terminal 4 - Python Backend for Computer Vision AND Emotion:
 ```bash
 cd backend
