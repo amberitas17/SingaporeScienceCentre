@@ -21,7 +21,7 @@ This application uses a **hybrid AI approach** combining cloud and local inferen
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.9+
+- Python 3.10
 - Node.js 18+
 - Model files in `backend/asset/`
 - Roboflow API access
@@ -32,10 +32,10 @@ This application uses a **hybrid AI approach** combining cloud and local inferen
 IMPORTANT:
 Install python 3.10 to PATH (python version higher than 3.10 does not support some libraries such as mediapipe)
 
-#### Terminal 1 - Python Backend:
+#### Terminal 1 - Python Backend for Emotion:
 ```bash
 cd backend
-python3.10 -m venv venv
+py -3.10 -m venv venv
 
 # Windows
 venv\Scripts\activate
@@ -48,7 +48,7 @@ python app.py
 ```
 
 IMPORTANT: 
-Do not forget to change the localhost ip to your current ip address in config.ts
+Do not forget to change the localhost ip to your current ip address in config.ts (you can check localhost by typing ipconfig and seeing the ipv4 address sample: 192.168.1.10)
 
 #### Terminal 2 - Python Backend for Computer Vision:
 ```bash
@@ -65,7 +65,7 @@ python yolov8_flask_api.py
 
 IMPORTANT: 
 Edit the ip in features.tsx located in app/(tabs) to your current ip address
-const response = await fetch('https://brightly-enormous-pigeon.ngrok-free.app/detect_base64',
+const response = await fetch('http://192.168.1.10:5001/detect_base64',
 
 OTHER ISSUES AND POSSIBLE FIXES:
 - Install pip package on missing libraries
