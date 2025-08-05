@@ -18,7 +18,7 @@
  */
 
 // ✅ Updated with your computer's IP address from Flask output
-export const FLASK_BASE_URL = 'https://brightly-enormous-pigeon.ngrok-free.app'; // Your actual IP address
+export const FLASK_BASE_URL = 'http://192.168.1.10:5000'; // Your actual IP address
 
 // Alternative configuration for different environments
 export const CONFIG = {
@@ -26,7 +26,7 @@ export const CONFIG = {
   WEB_DEV: 'http://192.168.1.5:5000',
   
   // ✅ Updated with your computer's IP address from Flask output  
-  MOBILE_DEV: 'https://brightly-enormous-pigeon.ngrok-free.app', // Your actual IP address
+  MOBILE_DEV: 'http://192.168.1.10:5000', // Your actual IP address
   
   // Use this for production
   PRODUCTION: 'https://your-production-url.com'
