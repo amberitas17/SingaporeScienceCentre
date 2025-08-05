@@ -23,7 +23,7 @@ export const FLASK_BASE_URL = 'http://192.168.1.10:5000'; // Your actual IP addr
 // Alternative configuration for different environments
 export const CONFIG = {
   // Use this for local web development
-  WEB_DEV: 'http://192.168.1.5:5000',
+  WEB_DEV: 'http://192.168.1.10:5000',
   
   // ✅ Updated with your computer's IP address from Flask output  
   MOBILE_DEV: 'http://192.168.1.10:5000', // Your actual IP address
