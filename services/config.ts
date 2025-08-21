@@ -36,7 +36,7 @@ export const CONFIG = {
 export const getApiUrl = (): string => {
   // For now, always use mobile dev URL
   // You can add logic here to detect web vs mobile environment
-  return CONFIG.PRODUCTION;
+  return CONFIG.MOBILE_DEV; // Default to mobile development URL
 };
 
 export default {
