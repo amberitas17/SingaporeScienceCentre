@@ -29,14 +29,14 @@ export const CONFIG = {
   MOBILE_DEV: 'http://192.168.1.5:5002', // Your actual IP address
   
   // Use this for production
-  PRODUCTION: 'https://your-production-url.com'
+  PRODUCTION: 'https://backend-ugfp.onrender.com'
 };
 
 // Auto-detect environment (you can modify this logic as needed)
 export const getApiUrl = (): string => {
   // For now, always use mobile dev URL
   // You can add logic here to detect web vs mobile environment
-  return CONFIG.MOBILE_DEV;
+  return CONFIG.PRODUCTION;
 };
 
 export default {
