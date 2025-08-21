@@ -18,7 +18,7 @@
  */
 
 // ✅ Updated with your computer's IP address from Flask output
-export const FLASK_BASE_URL = ' http://192.168.1.5:5000'; // Your actual IP address
+export const FLASK_BASE_URL = 'https://singapore2-hne0a4afdrafc7d7.eastus-01.azurewebsites.net/'; // Your actual IP address
 
 // Alternative configuration for different environments
 export const CONFIG = {
@@ -29,14 +29,14 @@ export const CONFIG = {
   MOBILE_DEV: 'http://192.168.1.5:5000', // Your actual IP address
   
   // Use this for production
-  PRODUCTION: 'https://backend-ugfp.onrender.com'
+  PRODUCTION: 'https://singapore2-hne0a4afdrafc7d7.eastus-01.azurewebsites.net/'
 };
 
 // Auto-detect environment (you can modify this logic as needed)
 export const getApiUrl = (): string => {
   // For now, always use mobile dev URL
   // You can add logic here to detect web vs mobile environment
-  return CONFIG.MOBILE_DEV; // Default to mobile development URL
+  return CONFIG.PRODUCTION; // Default to mobile development URL
 };
 
 export default {

@@ -746,7 +746,7 @@ export default function CameraToNavigationScreen() {
       };
 
       // Send to Flask API
-      const response = await fetch('http://192.168.1.5:5000/detect_base64', {
+      const response = await fetch('https://singapore2-hne0a4afdrafc7d7.eastus-01.azurewebsites.net/detect_base64', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
